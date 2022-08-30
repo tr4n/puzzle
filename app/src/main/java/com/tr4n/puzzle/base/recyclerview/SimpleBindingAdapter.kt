@@ -8,7 +8,7 @@ import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.DiffUtil
 import com.tr4n.puzzle.BR
 
-open class SimpleDataBindingAdapter<T>(
+open class SimpleBindingAdapter<T>(
     @LayoutRes private val layoutId: Int,
     diffUtilCallback: DiffUtil.ItemCallback<T> = BaseDiffUtilItemCallback()
 ) : DataBindingAdapter<T>(diffUtilCallback) {
@@ -17,7 +17,7 @@ open class SimpleDataBindingAdapter<T>(
 
     override fun bind(holder: DataBindingViewHolder<ViewDataBinding>, item: T, position: Int) {
         holder.binding.apply {
-//            setVariable(BR.item, item)
+            setVariable(BR.item, item)
 //            setVariable(BR.position, position)
 //            setVariable(BR.isLast, position == itemCount - 1)
 //            listener?.let {

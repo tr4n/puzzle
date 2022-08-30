@@ -12,10 +12,8 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.NavDirections
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
-import com.tr4n.puzzle.di.App.context
 import com.tr4n.puzzle.extension.showSnackBar
 import com.tr4n.puzzle.extension.showToast
-import com.tr4n.puzzle.util.ConnectionType
 
 abstract class BaseFragment<VB : ViewDataBinding, VM : BaseViewModel> : Fragment() {
 

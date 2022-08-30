@@ -1,17 +1,16 @@
 package com.tr4n.puzzle.base
 
-import android.app.Activity
 import android.os.Bundle
 import android.view.View
 import androidx.annotation.LayoutRes
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
-import androidx.lifecycle.LifecycleOwner
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
 import com.tr4n.puzzle.extension.showSnackBar
 import com.tr4n.puzzle.extension.showToast
 
-abstract class BaseActivity<VB : ViewDataBinding, VM : BaseViewModel> : Activity(), LifecycleOwner {
+abstract class BaseActivity<VB : ViewDataBinding, VM : BaseViewModel> : FragmentActivity() {
 
     @get:LayoutRes
     protected abstract val layoutResource: Int

@@ -1,6 +1,7 @@
 package com.tr4n.puzzle.util
 
 import android.content.res.Resources
+import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
@@ -21,7 +22,7 @@ import com.tr4n.puzzle.R
 import com.tr4n.puzzle.base.recyclerview.BaseDiffUtilItemCallback
 import com.tr4n.puzzle.base.recyclerview.BindAbleAdapter
 import com.tr4n.puzzle.base.recyclerview.DataBindingListener
-import com.tr4n.puzzle.base.recyclerview.SimpleDataBindingAdapter
+import com.tr4n.puzzle.base.recyclerview.SimpleBindingAdapter
 import com.tr4n.puzzle.extension.navigationBarHeight
 import com.tr4n.puzzle.extension.statusBarHeight
 import java.text.SimpleDateFormat
@@ -45,18 +46,18 @@ fun <T> RecyclerView.setAdapterData(
     requireAll = false
 )
 fun <T> RecyclerView.setSimpleAdapter(
-    data: List<T>,
+    data: List<T>?,
     @LayoutRes layoutId: Int,
     listener: DataBindingListener? = null,
     diffUtilItemCallback: DiffUtil.ItemCallback<T>? = null
 ) {
     val diffUtil = diffUtilItemCallback ?: BaseDiffUtilItemCallback()
-    if (adapter as? SimpleDataBindingAdapter<*> == null) {
-        adapter = SimpleDataBindingAdapter(layoutId, diffUtil)
+    if (adapter as? SimpleBindingAdapter<*> == null) {
+        adapter = SimpleBindingAdapter(layoutId, diffUtil)
     }
 
-    (adapter as? SimpleDataBindingAdapter<T>)?.apply {
-        setItems(data)
+    (adapter as? SimpleBindingAdapter<T>)?.apply {
+        setItems(data ?: emptyList())
         this.listener = listener
     }
 }
@@ -103,6 +104,13 @@ fun ImageView.setImageResource(resId: Int? = null, url: String? = null, bgRes: I
     } catch (e: Exception) {
         // Resource not found
         e.printStackTrace()
+    }
+}
+
+@BindingAdapter("bitmap")
+fun ImageView.setBindingImageBitmap(bitmap: Bitmap) {
+    kotlin.runCatching {
+        setImageBitmap(bitmap)
     }
 }
 

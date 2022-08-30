@@ -2,13 +2,16 @@ package com.tr4n.puzzle.base
 
 import androidx.databinding.Observable
 import androidx.databinding.PropertyChangeRegistry
-import androidx.lifecycle.*
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.tr4n.puzzle.BuildConfig
 import com.tr4n.puzzle.util.SingleLiveData
 import kotlinx.coroutines.*
+import org.koin.core.component.KoinComponent
 import kotlin.coroutines.CoroutineContext
 
-abstract class BaseViewModel : ViewModel(), CoroutineScope, Observable {
+abstract class BaseViewModel : ViewModel(), CoroutineScope, Observable, KoinComponent {
 
     val messageToast = SingleLiveData<Any>()
 
