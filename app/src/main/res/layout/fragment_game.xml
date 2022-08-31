@@ -42,17 +42,31 @@
             style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
             android:layout_marginEnd="@dimen/dp_32"
-            android:layout_marginBottom="@dimen/dp_32"
             android:adjustViewBounds="true"
             android:elevation="@dimen/dp_16"
             android:onClick="@{v -> listener.updateSize(true)}"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_baseline_add_circle_24" />
 
         <androidx.appcompat.widget.AppCompatImageButton
-            android:id="@+id/buttonDown"
+            android:id="@+id/buttonSolve"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="32dp"
+            android:layout_marginBottom="@dimen/dp_32"
+            android:adjustViewBounds="true"
+            android:elevation="@dimen/dp_16"
+            android:onClick="@{v -> viewModel.solve()}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:srcCompat="@drawable/ic_baseline_not_started_24" />
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/buttonShuffle"
             style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -60,23 +74,37 @@
             android:layout_marginBottom="@dimen/dp_32"
             android:adjustViewBounds="true"
             android:elevation="@dimen/dp_16"
-            android:onClick="@{v -> listener.updateSize(false)}"
+            android:onClick="@{v -> viewModel.shuffle()}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:srcCompat="@drawable/ic_baseline_shuffle_on_24" />
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/buttonDown"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="32dp"
+            android:adjustViewBounds="true"
+            android:elevation="@dimen/dp_16"
+            android:onClick="@{v -> listener.updateSize(false)}"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_baseline_indeterminate_check_box_24" />
 
         <TextView
             android:id="@+id/textSize"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
             android:gravity="center"
             android:text="@{String.valueOf(viewModel.currentSize)}"
             android:textColor="@color/black"
             android:textSize="@dimen/sp_18"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="@+id/buttonDown"
+            app:layout_constraintEnd_toStartOf="@+id/buttonUp"
+            app:layout_constraintStart_toEndOf="@+id/buttonDown"
+            app:layout_constraintTop_toTopOf="@+id/buttonDown"
             tools:text="@tools:sample/us_phones" />
 
         <androidx.appcompat.widget.AppCompatImageView

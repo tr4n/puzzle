@@ -1,135 +1,124 @@
 package com.tr4n.puzzle.util
 
 import com.tr4n.puzzle.data.model.State
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
+class PuzzleGraph(initState: State) {
 
-/**
- * Create a Direction Graph of blood pressures for find first valid bp set
- * Algorithm: Depth first search (DFS)
- * @see <img src="https://upload.wikimedia.org/wikipedia/commons/7/7f/Depth-First-Search.gif"/>
- *
- */
-class PuzzleGraph(
-    private val state: State
-) {
-    private val nodes = emptyList<Node>()
+    private val openSet = NodeSet(listOf(Node(initState)))
 
-    private val graphEdges = Edges(nodes)
+    private val closeSet = NodeSet()
 
-    private val selectedNodes = mutableListOf<Node>()
+    suspend fun search(): List<State>? = withContext(Dispatchers.IO) {
 
-    private val openNodes = listOf<Node>()
-
-    private val closedNodes = listOf<Node>()
-
-
-    /**
-     * search by dfs
-     */
-    private fun searchByDFS(): Any? {
-        for (node in nodes) {
-            selectedNodes.clear()
-            nodes.forEach {
-                it.isVisited = false
+        while (openSet.isNotEmpty()) {
+            val node = openSet.pop() ?: break
+            if (node.isTarget) {
+                return@withContext track(node)
             }
-            if (visit(node)) {
-                return selectedNodes.map { it.state }
+
+            val nextNodes = node.getNextNodes()
+            for (nextNode in nextNodes) {
+                when {
+                    nextNode !in openSet && nextNode !in closeSet -> openSet += nextNode
+                    nextNode in openSet -> {
+                        val openNodeCost = openSet[nextNode.code]?.cost ?: continue
+                        if (openNodeCost > nextNode.cost) {
+                            nextNode.parentCode = node.code
+                            openSet[nextNode.code] = nextNode
+                        }
+                    }
+
+                    nextNode in closeSet -> {
+                        val closedNodeCost = closeSet[nextNode.code]?.cost ?: continue
+                        if (closedNodeCost > nextNode.cost) {
+                            nextNode.parentCode = node.code
+                            closeSet[nextNode.code] = nextNode
+                            closeSet.updateChildrenOf(nextNode)
+                            openSet.updateChildrenOf(nextNode)
+                        }
+                    }
+                }
             }
+            closeSet += node
         }
-        return null
+        return@withContext null
     }
 
-    /**
-     * Visit node
-     * Check if [selectedNodes] is a valid set then finish
-     * otherwise, visit node's children
-     * @param node: [Node]
-     */
-    private fun visit(node: Node): Boolean {
-        node.isVisited = true
-        selectedNodes.add(node)
-
-        if (node.isTarget) {
-            return true
+    private fun track(node: Node): List<State> {
+        val states = mutableListOf(node.state)
+        var currentNode = node
+        while (currentNode.parentCode != null) {
+            currentNode = closeSet[currentNode.parentCode] ?: break
+            states.add(currentNode.state)
         }
-
-        for (edge in graphEdges[node]) {
-            val nextNode = edge.end
-            val shouldVisitNextNode = !nextNode.isVisited
-
-            if (shouldVisitNextNode) {
-                if (visit(nextNode)) return true
-
-                // clear node's status when turn back
-                nextNode.isVisited = false
-                selectedNodes.removeLastOrNull()
-            }
-        }
-        return false
+        return states.reversed()
     }
 
-    /**
-     * Each BP is a [Node] has attributes:
-     * @param index: index of [State] in [state], the index of node in [nodes] too.
-     * @param state: [State]
-     * @param isVisited:  [Boolean] true if dfs visited
-     */
     data class Node(
-        val index: Int,
         val state: State,
+        var cost: Int = 0,
+        var parentCode: String? = null,
         var isVisited: Boolean = false
     ) {
 
-        val isTarget get() = state.isTarget()
+        val code = state.puzzles.joinToString(prefix = "", separator = ",", postfix = "") {
+            it.index.toString()
+        }
 
-        companion object {
-            /**
-             * create new node from [State] and index
-             * @param index: [Int] index of bp
-             * @param state: [State]
-             */
-            fun initNode(index: Int, state: State): Node {
-                return Node(index = index, state = state)
+        val isTarget get() = state.isTarget
+
+        fun estimateTo(node: Node): Int {
+            return cost + node.state.mahattanDistance
+        }
+
+        fun getNextNodes(): List<Node> {
+            return state.getNextStates().map { state ->
+                Node(state, cost + state.mahattanDistance, code)
             }
         }
     }
 
-    /**
-     * Two node is a edge if time between 2 bp
-     *  + is not out of range restPeriodBetweenMeasurements to max (for primary measurement)
-     *  + is not out of range restTimeConfirmationMeasurement to max extra (for extra measurement)
-     */
-    data class Edge(
-        val start: Node,
-        val end: Node,
-    ) {
-        companion object {
-            /**
-             * The edge is created if  2 node is valid between time
-             */
-            fun createEdgeOrNull(start: Node, end: Node): Edge? {
-                return Edge(start, end)
-            }
-        }
-    }
+    class NodeSet(initNodes: List<Node> = emptyList()) {
 
-    /**
-     * All edges of graph
-     */
-    class Edges(nodes: List<Node>) {
+        private var nodes = initNodes.toMutableList()
+        private val nodeCodeSet = initNodes.map { it.code }.toMutableSet()
 
-        private val edgeList = nodes.mapIndexed { index, startNode ->
-            nodes.subList(index, nodes.size).mapNotNull { endNode ->
-                Edge.createEdgeOrNull(startNode, endNode)
-            }
+        operator fun plusAssign(node: Node) {
+            nodes.add(node)
+            nodes.sortBy { it.cost }
+            nodeCodeSet.add(node.code)
         }
 
-        operator fun get(start: Node): List<Edge> {
-            return edgeList.getOrNull(start.index) ?: emptyList()
+        operator fun contains(node: Node): Boolean {
+            return node.code in nodeCodeSet
         }
 
-        operator fun get(start: Node, end: Node): Edge? {
-            return edgeList[start.index].find { it.end.index == end.index }
+        operator fun set(code: String, node: Node): Boolean {
+            val index =
+                nodes.indexOfFirst { it.code == code }.takeIf { it >= 0 } ?: return false
+            nodes[index] = node
+            return true
+        }
+
+        operator fun get(code: String?): Node? {
+            val index =
+                nodes.indexOfFirst { it.code == code }.takeIf { it >= 0 } ?: return null
+            return nodes[index]
+        }
+
+        fun pop(): Node? {
+            return nodes.removeFirstOrNull()
+        }
+
+        fun isNotEmpty() = nodes.isNotEmpty()
+
+        fun updateChildrenOf(parentNode: Node) {
+            nodes = nodes.map {
+                if (it.parentCode != parentNode.code) return@map it
+                it.copy(cost = parentNode.estimateTo(it))
+            }.toMutableList()
         }
     }
 }

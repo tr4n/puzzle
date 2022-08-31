@@ -14,6 +14,7 @@ import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.tr4n.puzzle.extension.showSnackBar
 import com.tr4n.puzzle.extension.showToast
+import com.tr4n.puzzle.util.LoadingDialog
 
 abstract class BaseFragment<VB : ViewDataBinding, VM : BaseViewModel> : Fragment() {
 
@@ -23,6 +24,10 @@ abstract class BaseFragment<VB : ViewDataBinding, VM : BaseViewModel> : Fragment
     protected abstract val layoutResId: Int
 
     protected abstract val viewModel: VM
+
+    private val loadingDialog by lazy {
+        LoadingDialog(requireContext())
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -79,6 +84,9 @@ abstract class BaseFragment<VB : ViewDataBinding, VM : BaseViewModel> : Fragment
 //                message(it.message.toString())
 //                midButton(R.string.ok)
 //            }
+        }
+        viewModel.loading.observe(viewLifecycleOwner) {
+            if (it) loadingDialog.show() else loadingDialog.dismiss()
         }
     }
 

@@ -31,7 +31,12 @@ class GameFragment : BaseFragment<FragmentGameBinding, GameViewModel>(), GameFra
         viewBD.recyclerPuzzles.setOnSafeSwipeListener()
     }
 
+    override fun initData() {
+        viewModel.updateSize(true)
+    }
+
     override fun observe() {
+        super.observe()
         viewModel.currentSize.observe(viewLifecycleOwner) {
             val layoutManager = GridLayoutManager(requireContext(), it)
             viewBD.recyclerPuzzles.layoutManager = layoutManager
