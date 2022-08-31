@@ -6,7 +6,7 @@
 
         <variable
             name="item"
-            type="com.tr4n.puzzle.data.Puzzle" />
+            type="com.tr4n.puzzle.data.model.Puzzle" />
     </data>
 
     <FrameLayout
@@ -14,7 +14,7 @@
         android:layout_height="wrap_content">
 
         <androidx.appcompat.widget.AppCompatImageView
-            bitmap="@{item.bitmap}"
+            bitmap="@{item.id == 0 ? null : item.bitmap}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/dp_1"
@@ -28,9 +28,9 @@
             android:layout_gravity="bottom|end"
             android:background="@android:color/darker_gray"
             android:padding="@dimen/dp_8"
-            android:visibility="invisible"
             android:text="@{String.valueOf(item.id)}"
             android:textColor="@color/white"
+            android:visibility="invisible"
             tools:maxLength="2"
             tools:text="@tools:sample/us_zipcodes" />
     </FrameLayout>

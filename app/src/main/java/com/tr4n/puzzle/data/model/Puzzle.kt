@@ -1,4 +1,4 @@
-package com.tr4n.puzzle.data
+package com.tr4n.puzzle.data.model
 
 import android.graphics.Bitmap
 

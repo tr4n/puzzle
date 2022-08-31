@@ -1,12 +1,15 @@
 package com.tr4n.puzzle.ui.game
 
+import android.view.View
 import androidx.recyclerview.widget.GridLayoutManager
 import com.tr4n.puzzle.R
 import com.tr4n.puzzle.base.BaseFragment
 import com.tr4n.puzzle.base.recyclerview.DataBindingListener
 import com.tr4n.puzzle.base.recyclerview.SimpleBindingAdapter
-import com.tr4n.puzzle.data.Puzzle
+import com.tr4n.puzzle.data.model.Puzzle
+import com.tr4n.puzzle.data.type.Move
 import com.tr4n.puzzle.databinding.FragmentGameBinding
+import com.tr4n.puzzle.listener.OnSwipeTouchListener
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class GameFragment : BaseFragment<FragmentGameBinding, GameViewModel>(), GameFragmentListener {
@@ -23,6 +26,11 @@ class GameFragment : BaseFragment<FragmentGameBinding, GameViewModel>(), GameFra
         viewBD.listener = this
     }
 
+    override fun setUpView() {
+        viewBD.root.setOnSafeSwipeListener()
+        viewBD.recyclerPuzzles.setOnSafeSwipeListener()
+    }
+
     override fun observe() {
         viewModel.currentSize.observe(viewLifecycleOwner) {
             val layoutManager = GridLayoutManager(requireContext(), it)
@@ -30,12 +38,32 @@ class GameFragment : BaseFragment<FragmentGameBinding, GameViewModel>(), GameFra
         }
     }
 
-    override fun onIncreaseSize() {
-        viewModel.increaseSize()
+    override fun updateSize(isIncrease: Boolean) {
+        viewModel.updateSize(isIncrease)
+    }
+
+    private fun View.setOnSafeSwipeListener() {
+        setOnTouchListener(object : OnSwipeTouchListener(context) {
+            override fun onSwipeTop() {
+                viewModel.swipePuzzle(Move.UP)
+            }
+
+            override fun onSwipeBottom() {
+                viewModel.swipePuzzle(Move.DOWN)
+            }
+
+            override fun onSwipeLeft() {
+                viewModel.swipePuzzle(Move.LEFT)
+            }
+
+            override fun onSwipeRight() {
+                viewModel.swipePuzzle(Move.RIGHT)
+            }
+        })
     }
 }
 
 interface GameFragmentListener : DataBindingListener {
 
-    fun onIncreaseSize()
+    fun updateSize(isIncrease: Boolean)
 }

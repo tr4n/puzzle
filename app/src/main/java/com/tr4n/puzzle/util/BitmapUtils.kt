@@ -309,8 +309,8 @@ object BitmapUtils {
         val partHeight = height / size
         val bitmaps = mutableListOf<Bitmap>()
 
-        for (x in 0 until size) {
-            for (y in 0 until size) {
+        for (y in 0 until size) {
+            for (x in 0 until size) {
                 val bitmap = Bitmap.createBitmap(
                     this,
                     x * partWidth, y * partHeight,

@@ -108,7 +108,7 @@ fun ImageView.setImageResource(resId: Int? = null, url: String? = null, bgRes: I
 }
 
 @BindingAdapter("bitmap")
-fun ImageView.setBindingImageBitmap(bitmap: Bitmap) {
+fun ImageView.setBindingImageBitmap(bitmap: Bitmap?) {
     kotlin.runCatching {
         setImageBitmap(bitmap)
     }

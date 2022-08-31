@@ -1,38 +1,54 @@
 package com.tr4n.puzzle.ui.game
 
-import android.graphics.Bitmap
 import androidx.lifecycle.MutableLiveData
 import com.tr4n.puzzle.R
 import com.tr4n.puzzle.base.BaseViewModel
-import com.tr4n.puzzle.data.Puzzle
+import com.tr4n.puzzle.data.model.Puzzle
+import com.tr4n.puzzle.data.model.State
+import com.tr4n.puzzle.data.type.Move
 import com.tr4n.puzzle.di.App
 import com.tr4n.puzzle.util.BitmapUtils
 import com.tr4n.puzzle.util.BitmapUtils.cropCenter
 import com.tr4n.puzzle.util.BitmapUtils.split
+import java.lang.Integer.max
+import java.lang.Integer.min
 
 class GameViewModel : BaseViewModel() {
 
-    val currentSize = MutableLiveData<Int>()
+    val currentSize = MutableLiveData<Int>(3)
 
     val puzzles = MutableLiveData<List<Puzzle>>()
 
-    val bitmap = MutableLiveData<Bitmap>()
+    val currentState = MutableLiveData<State>()
 
-    val fullBitmap by lazy {
+    private var originPuzzles = listOf<Puzzle>()
+
+    private var currentPuzzles = listOf<Puzzle>()
+
+    private val fullBitmap by lazy {
         BitmapUtils.decodeSampledBitmapFromResource(
             App.context.resources,
-            R.drawable.sample,
+            R.drawable.img_sample,
             400,
             400
         ).cropCenter()
     }
 
-    fun increaseSize() {
-        val size = (currentSize.value ?: 0) + 1
-        currentSize.value = size
+    fun updateSize(isIncrease: Boolean) {
+        val size = (currentSize.value ?: 3) + if (isIncrease) 1 else -1
+        currentSize.value = min(5, max(3, size))
         val smallBitmaps = fullBitmap.split(size)
-        puzzles.value = smallBitmaps.mapIndexed { index, bitmap ->
+        originPuzzles = smallBitmaps.mapIndexed { index, bitmap ->
             Puzzle(index, bitmap = bitmap)
+        }
+        currentPuzzles = originPuzzles
+        currentState.value = State(currentPuzzles)
+    }
+
+    fun swipePuzzle(move: Move) {
+        currentState.value = currentState.value?.move(move)
+        if (currentState.value?.isTarget() == true) {
+            messageSnackBar.value = "target"
         }
     }
 }
