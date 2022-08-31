@@ -55,8 +55,9 @@ class GameViewModel : BaseViewModel() {
 
     fun shuffle() {
         var state = currentState.value ?: return
+        val size = currentSize.value ?: 3
         var previousMove = Move.DOWN
-        repeat(100) {
+        repeat(size * 50) {
             val move = Move.values().filter { (it.value + 2) % 4 != previousMove.value }.random()
             state = state.move(move)
             previousMove = move
@@ -71,7 +72,7 @@ class GameViewModel : BaseViewModel() {
             val solvedStates = PuzzleGraph(stateCurrent).search() ?: emptyList()
             loading.value = false
             for (state in solvedStates) {
-                delay(500L)
+                delay(300L)
                 currentState.value = state
             }
             messageSnackBar.value = if (solvedStates.isEmpty()) "None" else "Done"

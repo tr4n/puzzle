@@ -3,12 +3,15 @@ package com.tr4n.puzzle.util
 import com.tr4n.puzzle.data.model.State
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.util.*
 
 class PuzzleGraph(initState: State) {
 
     private val openSet = NodeSet(listOf(Node(initState)))
 
     private val closeSet = NodeSet()
+
+    private val openQueue = NodeQueue(listOf(Node(initState)))
 
     suspend fun search(): List<State>? = withContext(Dispatchers.IO) {
 
@@ -23,16 +26,16 @@ class PuzzleGraph(initState: State) {
                 when {
                     nextNode !in openSet && nextNode !in closeSet -> openSet += nextNode
                     nextNode in openSet -> {
-                        val openNodeCost = openSet[nextNode.code]?.cost ?: continue
-                        if (openNodeCost > nextNode.cost) {
+                        val openNodeCost = openSet[nextNode.code]?.costFromStart ?: continue
+                        if (openNodeCost > nextNode.costFromStart) {
                             nextNode.parentCode = node.code
                             openSet[nextNode.code] = nextNode
                         }
                     }
 
                     nextNode in closeSet -> {
-                        val closedNodeCost = closeSet[nextNode.code]?.cost ?: continue
-                        if (closedNodeCost > nextNode.cost) {
+                        val closedNodeCost = closeSet[nextNode.code]?.costFromStart ?: continue
+                        if (closedNodeCost > nextNode.costFromStart) {
                             nextNode.parentCode = node.code
                             closeSet[nextNode.code] = nextNode
                             closeSet.updateChildrenOf(nextNode)
@@ -42,6 +45,22 @@ class PuzzleGraph(initState: State) {
                 }
             }
             closeSet += node
+        }
+        return@withContext null
+    }
+
+    private val closedSet = mutableSetOf<String>()
+    suspend fun searchByQueue(): List<State>? = withContext(Dispatchers.IO) {
+
+        while (openQueue.isNotEmpty()) {
+            val node = openQueue.pop() ?: break
+            if (node.isTarget) {
+                return@withContext track(node)
+            }
+            closedSet.add(node.code)
+
+            val nextNodes = node.getNextNodes()
+            openQueue += nextNodes.filterNot { it.code in closedSet }
         }
         return@withContext null
     }
@@ -58,24 +77,25 @@ class PuzzleGraph(initState: State) {
 
     data class Node(
         val state: State,
-        var cost: Int = 0,
-        var parentCode: String? = null,
-        var isVisited: Boolean = false
+        var costFromStart: Int = 0,
+        var parentCode: String? = null
     ) {
+
+        private val costToTarget = state.mahattanDistance
 
         val code = state.puzzles.joinToString(prefix = "", separator = ",", postfix = "") {
             it.index.toString()
         }
 
-        val isTarget get() = state.isTarget
+        val isTarget = state.isTarget
 
-        fun estimateTo(node: Node): Int {
-            return cost + node.state.mahattanDistance
-        }
+        val cost get() = costFromStart  + costToTarget
+
+        val costToNextNode get() = costFromStart + 1
 
         fun getNextNodes(): List<Node> {
             return state.getNextStates().map { state ->
-                Node(state, cost + state.mahattanDistance, code)
+                Node(state, costToNextNode, code)
             }
         }
     }
@@ -109,7 +129,8 @@ class PuzzleGraph(initState: State) {
         }
 
         fun pop(): Node? {
-            return nodes.removeFirstOrNull()
+            val node = nodes.minBy { it.cost }
+            return node.takeIf { nodes.remove(node) }
         }
 
         fun isNotEmpty() = nodes.isNotEmpty()
@@ -117,8 +138,33 @@ class PuzzleGraph(initState: State) {
         fun updateChildrenOf(parentNode: Node) {
             nodes = nodes.map {
                 if (it.parentCode != parentNode.code) return@map it
-                it.copy(cost = parentNode.estimateTo(it))
+                it.copy(costFromStart = parentNode.costFromStart + 1)
             }.toMutableList()
         }
+    }
+
+    class NodeQueue(initNodes: List<Node> = emptyList()) {
+
+        private var nodes = PriorityQueue<Node> { first, second ->
+            first.cost - second.cost
+        }.apply {
+            addAll(initNodes)
+        }
+        private val nodeCodeSet = initNodes.map { it.code }.toMutableSet()
+
+        operator fun plusAssign(nodes: List<Node>) {
+            this.nodes.addAll(nodes)
+            nodeCodeSet.addAll(nodes.map { it.code })
+        }
+
+        operator fun contains(node: Node): Boolean {
+            return node.code in nodeCodeSet
+        }
+
+        fun pop(): Node? {
+            return nodes.poll()
+        }
+
+        fun isNotEmpty() = nodes.isNotEmpty()
     }
 }
