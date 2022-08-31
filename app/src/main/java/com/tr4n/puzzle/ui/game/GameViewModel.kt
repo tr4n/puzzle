@@ -15,7 +15,7 @@ import java.lang.Integer.min
 
 class GameViewModel : BaseViewModel() {
 
-    val currentSize = MutableLiveData<Int>(3)
+    val currentSize = MutableLiveData<Int>()
 
     val puzzles = MutableLiveData<List<Puzzle>>()
 
@@ -35,8 +35,10 @@ class GameViewModel : BaseViewModel() {
     }
 
     fun updateSize(isIncrease: Boolean) {
-        val size = (currentSize.value ?: 3) + if (isIncrease) 1 else -1
-        currentSize.value = min(5, max(3, size))
+        val size = currentSize.value?.let {
+            max(3, it + if (isIncrease) 1 else -1)
+        } ?: 3
+        currentSize.value = min(5, size)
         val smallBitmaps = fullBitmap.split(size)
         originPuzzles = smallBitmaps.mapIndexed { index, bitmap ->
             Puzzle(index, bitmap = bitmap)

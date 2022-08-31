@@ -8,12 +8,12 @@ data class State(val puzzles: List<Puzzle>) {
     private val size = sqrt(puzzles.size.toDouble()).toInt()
 
     fun isTarget(): Boolean {
-        puzzles.forEachIndexed { index, puzzle -> if (puzzle.id != index) return false }
+        puzzles.forEachIndexed { index, puzzle -> if (puzzle.index != index) return false }
         return true
     }
 
     fun move(move: Move): State {
-        val currentEmptyIndex = puzzles.indexOfFirst { it.id == 0 }.takeIf { it > 0 } ?: 0
+        val currentEmptyIndex = puzzles.indexOfFirst { it.index == 0 }.takeIf { it > 0 } ?: 0
         val delta = when (move) {
             Move.LEFT -> 1
             Move.RIGHT -> -1

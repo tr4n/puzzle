@@ -14,7 +14,7 @@
         android:layout_height="wrap_content">
 
         <androidx.appcompat.widget.AppCompatImageView
-            bitmap="@{item.id == 0 ? null : item.bitmap}"
+            bitmap="@{item.index == 0 ? null : item.bitmap}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/dp_1"
@@ -28,7 +28,7 @@
             android:layout_gravity="bottom|end"
             android:background="@android:color/darker_gray"
             android:padding="@dimen/dp_8"
-            android:text="@{String.valueOf(item.id)}"
+            android:text="@{String.valueOf(item.index)}"
             android:textColor="@color/white"
             android:visibility="invisible"
             tools:maxLength="2"
