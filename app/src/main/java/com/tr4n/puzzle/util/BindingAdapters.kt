@@ -16,6 +16,7 @@ import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.tr4n.puzzle.R
@@ -60,6 +61,11 @@ fun <T> RecyclerView.setSimpleAdapter(
         setItems(data ?: emptyList())
         this.listener = listener
     }
+}
+
+@BindingAdapter("gridSpanCount")
+fun RecyclerView.setGridLayoutManagerSpanCount(spanCount: Int?) {
+    layoutManager = GridLayoutManager(context, spanCount ?: 1)
 }
 
 @BindingAdapter(value = ["textResource", "date", "format"], requireAll = false)
@@ -236,3 +242,4 @@ fun View.setLayoutWidthHeight(heightDimen: Float?, widthDimen: Float?) {
         heightDimen?.let { this.height = it.toInt() }
     }
 }
+

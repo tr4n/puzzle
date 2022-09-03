@@ -10,14 +10,15 @@
     </data>
 
     <FrameLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <androidx.appcompat.widget.AppCompatImageView
             bitmap="@{item.index == 0 ? null : item.bitmap}"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/dp_1"
+            android:scaleType="fitCenter"
             android:adjustViewBounds="true"
             tools:src="@tools:sample/avatars" />
 

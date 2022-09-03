@@ -122,6 +122,7 @@ abstract class BaseFragment<VB : ViewDataBinding, VM : BaseViewModel> : Fragment
         view?.showSnackBar("No Internet")
     }
 
+    @Suppress("DEPRECATION")
     protected fun setTextColorStatusBar(isTextDark: Boolean) {
         activity?.window?.decorView?.systemUiVisibility = if (isTextDark) {
             View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN

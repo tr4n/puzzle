@@ -7,4 +7,25 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="purple">#3700B3</color>
+    <color name="gray">#9C9A9A</color>
+    <color name="white_300">#4DFFFFFF</color>
+    <color name="color_black500">#80000000</color>
+
+    //Text
+    <color name="colorTextDark">#212121</color> <!--  grey-900 -->
+    <color name="colorTextLight">#757575</color> <!-- grey-600 -->
+    <color name="colorGrey500">#9E9E9E</color> <!-- grey-500 -->
+    <color name="colorGreyRBG74">#4A4A4A</color> <!-- grey-RBG(74,74,74) -->
+    <color name="colorGrey400">#BDBDBD</color>
+    <color name="colorGray300">#E0E0E0</color>
+
+    //Background
+    <color name="colorBlackTransparent44">#70000000</color>
+    <color name="colorWhiteTransparent50">#8Cffffff</color>
+    <color name="colorTransparent">#00000000</color>
+    <color name="colorBlueGray200">#B0BEC5</color>
+    <color name="colorGray100">#EEEEEE</color>
+    <color name="colorSilver">#C3C3C3</color>
+    <color name="grey100">#F5F5F5</color>
 </resources>

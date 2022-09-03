@@ -9,14 +9,14 @@ class MainApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        App.init(applicationContext)
         startKoin {
             // Koin Android logger
             androidLogger()
             //inject Android context
             androidContext(this@MainApplication)
             // use modules
-            modules(viewModelModule)
+            modules(sourceModule, viewModelModule)
         }
-        App.init(applicationContext)
     }
 }

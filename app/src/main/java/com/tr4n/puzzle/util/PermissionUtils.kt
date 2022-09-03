@@ -1,6 +1,6 @@
 package com.tr4n.puzzle.util
 
-import android.annotation.TargetApi
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
@@ -8,10 +8,10 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.Build
 import android.provider.Settings
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import com.tr4n.puzzle.di.App.context
 
 /**
  * example request permissions
@@ -87,6 +87,7 @@ class Activity/Fragment {
 /**
  * open app details setting
  */
+@SuppressLint("QueryPermissionsNeeded")
 fun Context.openAppDetailSettings() {
     val intent = Intent()
     intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
@@ -121,13 +122,6 @@ fun Context.isFirstTimeAskingPermissions(permissions: Array<String>): Boolean {
 }
 
 /**
- * Check if version is marshmallow and above. deciding to request runtime permission
- */
-fun shouldRequestRuntimePermission(): Boolean {
-    return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-}
-
-/**
  * check grandResults are granted
  */
 fun isGrantedGrantResults(grantResults: IntArray): Boolean {
@@ -144,22 +138,23 @@ fun isGrantedGrantResults(grantResults: IntArray): Boolean {
  * check if multiple permissions are granted or not
  */
 fun Context.shouldAskPermissions(permissions: Array<String>): Boolean {
-    if (shouldRequestRuntimePermission()) {
-        for (permission in permissions) {
-            if (ContextCompat.checkSelfPermission(this, permission)
-                != PackageManager.PERMISSION_GRANTED
-            ) {
-                return true
-            }
+    for (permission in permissions) {
+        if (ContextCompat.checkSelfPermission(this, permission)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            return true
         }
     }
     return false
 }
 
+fun Context.allPermissionsGranted(permissions: Array<String>) = permissions.all {
+    ContextCompat.checkSelfPermission(this, it) == PackageManager.PERMISSION_GRANTED
+}
+
 /**
  * check if should show request permissions rationale in activity
  */
-@TargetApi(Build.VERSION_CODES.M)
 fun <T : Activity> T.shouldShowRequestPermissionsRationale(permissions: Array<out String>): Boolean {
     for (permission in permissions) {
         if (shouldShowRequestPermissionRationale(permission)) {
@@ -184,36 +179,38 @@ fun <T : Fragment> T.shouldShowRequestPermissionsRationale(permissions: Array<ou
 /**
  * request permissions in activity
  */
-@TargetApi(Build.VERSION_CODES.M)
 fun <T : Activity> T.requestPermissions(
     permissions: Array<String>,
     permissionRequestCode: Int,
     requestPermissionListener: RequestPermissionListener
 ) {
-    // permissions is not granted
-    if (shouldAskPermissions(permissions)) {
+    val shouldAskPermissions = shouldAskPermissions(permissions)
+    val shouldShowRequestPermissionRationale = shouldShowRequestPermissionsRationale(permissions)
+    val isFirstTimeAskingPermissions = isFirstTimeAskingPermissions(permissions)
+
+    when {
         // permissions denied previously
-        if (shouldShowRequestPermissionsRationale(permissions)) {
+        shouldAskPermissions && shouldShowRequestPermissionRationale -> {
             requestPermissionListener.onPermissionRationaleShouldBeShown {
                 requestPermissions(permissions, permissionRequestCode)
             }
-        } else {
-            // Permission denied or first time requested
-            if (isFirstTimeAskingPermissions(permissions)) {
-                firstTimeAskingPermissions(permissions, false)
-                // request permissions
-                requestPermissions(permissions, permissionRequestCode)
-            } else {
-                // permission disabled
-                // Handle the feature without permission or ask user to manually allow permission
-                requestPermissionListener.onPermissionPermanentlyDenied {
-                    openAppDetailSettings()
-                }
+        }
+        // Permission denied or first time requested
+        shouldAskPermissions && isFirstTimeAskingPermissions -> {
+            firstTimeAskingPermissions(permissions, false)
+            requestPermissions(permissions, permissionRequestCode)
+        }
+        // permission disabled
+        // Handle the feature without permission or ask user to manually allow permission
+        shouldAskPermissions -> {
+            requestPermissionListener.onPermissionPermanentlyDenied {
+                openAppDetailSettings()
             }
         }
-    } else {
         // permission granted
-        requestPermissionListener.onPermissionGranted()
+        else -> {
+            requestPermissionListener.onPermissionGranted()
+        }
     }
 }
 
@@ -226,31 +223,33 @@ fun <T : Fragment> T.requestPermissions(
     requestPermissionListener: RequestPermissionListener
 ) {
     val context = context ?: return
+    val shouldAskPermissions = context.shouldAskPermissions(permissions)
+    val shouldShowRequestPermissionRationale = shouldShowRequestPermissionsRationale(permissions)
+    val isFirstTimeAskingPermissions = context.isFirstTimeAskingPermissions(permissions)
 
-    // permissions is not granted
-    if (context.shouldAskPermissions(permissions)) {
+    when {
         // permissions denied previously
-        if (shouldShowRequestPermissionsRationale(permissions)) {
+        shouldAskPermissions && shouldShowRequestPermissionRationale -> {
             requestPermissionListener.onPermissionRationaleShouldBeShown {
                 requestPermissions(permissions, permissionRequestCode)
             }
-        } else {
-            // Permission denied or first time requested
-            if (context.isFirstTimeAskingPermissions(permissions)) {
-                context.firstTimeAskingPermissions(permissions, false)
-                // request permissions
-                requestPermissions(permissions, permissionRequestCode)
-            } else {
-                // permission disabled
-                // Handle the feature without permission or ask user to manually allow permission
-                requestPermissionListener.onPermissionPermanentlyDenied {
-                    context.openAppDetailSettings()
-                }
+        }
+        // Permission denied or first time requested
+        shouldAskPermissions && isFirstTimeAskingPermissions -> {
+            context.firstTimeAskingPermissions(permissions, false)
+            requestPermissions(permissions, permissionRequestCode)
+        }
+        // permission disabled
+        // Handle the feature without permission or ask user to manually allow permission
+        shouldAskPermissions -> {
+            requestPermissionListener.onPermissionPermanentlyDenied {
+                context.openAppDetailSettings()
             }
         }
-    } else {
         // permission granted
-        requestPermissionListener.onPermissionGranted()
+        else -> {
+            requestPermissionListener.onPermissionGranted()
+        }
     }
 }
 
@@ -273,18 +272,18 @@ interface RequestPermissionListener {
      * Callback on permission previously denied
      * should show permission rationale and continue permission request
      */
-    fun onPermissionRationaleShouldBeShown(requestPermission: () -> Unit)
+    fun onPermissionRationaleShouldBeShown(requestPermission: () -> Unit) {}
 
     /**
      * Callback on permission "Never show again" checked and denied
      * should show message and open app setting
      */
-    fun onPermissionPermanentlyDenied(openAppSetting: () -> Unit)
+    fun onPermissionPermanentlyDenied(openAppSetting: () -> Unit) {}
 
     /**
      * Callback on permission granted
      */
-    fun onPermissionGranted()
+    fun onPermissionGranted() {}
 }
 
 /**
@@ -352,16 +351,16 @@ interface PermissionResultListener {
     /**
      * Callback on permission denied
      */
-    fun onPermissionRationaleShouldBeShown()
+    fun onPermissionRationaleShouldBeShown() {}
 
     /**
      * Callback on permission "Never show again" checked and denied
      */
-    fun onPermissionPermanentlyDenied()
+    fun onPermissionPermanentlyDenied() {}
 
     /**
      * Callback on permission granted
      */
-    fun onPermissionGranted()
+    fun onPermissionGranted() {}
 }
 

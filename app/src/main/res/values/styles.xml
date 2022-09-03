@@ -5,4 +5,9 @@
         <item name="theme">@style/Theme.Puzzle</item>
         <item name="android:forceDarkAllowed">false</item>
     </style>
+
+    <style name="DialogAnimation">
+        <item name="android:windowEnterAnimation">@anim/fade_in</item>
+        <item name="android:windowExitAnimation">@anim/fade_out</item>
+    </style>
 </resources>

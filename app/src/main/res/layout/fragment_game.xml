@@ -18,7 +18,8 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        app:paddingStatusBar="@{true}">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerPuzzles"
@@ -30,26 +31,13 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintEnd_toEndOf="parent"
+            android:overScrollMode="never"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintWidth_percent="0.8"
-            app:simpleData="@{viewModel.currentState.puzzles}"
             app:spanCount="3"
+            app:simpleData="@{viewModel.currentPuzzles}"
             tools:listitem="@layout/item_puzzle" />
-
-        <androidx.appcompat.widget.AppCompatImageButton
-            android:id="@+id/buttonUp"
-            style="@style/Widget.AppCompat.Button.Borderless"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:layout_marginEnd="@dimen/dp_32"
-            android:adjustViewBounds="true"
-            android:elevation="@dimen/dp_16"
-            android:onClick="@{v -> listener.updateSize(true)}"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_baseline_add_circle_24" />
 
         <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/buttonSolve"
@@ -59,6 +47,7 @@
             android:layout_marginEnd="32dp"
             android:layout_marginBottom="@dimen/dp_32"
             android:adjustViewBounds="true"
+            android:tint="@color/purple"
             android:elevation="@dimen/dp_16"
             android:onClick="@{v -> viewModel.solve()}"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -73,53 +62,36 @@
             android:layout_marginStart="32dp"
             android:layout_marginBottom="@dimen/dp_32"
             android:adjustViewBounds="true"
+            android:tint="@color/purple"
             android:elevation="@dimen/dp_16"
             android:onClick="@{v -> viewModel.shuffle()}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:srcCompat="@drawable/ic_baseline_shuffle_on_24" />
 
-        <androidx.appcompat.widget.AppCompatImageButton
-            android:id="@+id/buttonDown"
-            style="@style/Widget.AppCompat.Button.Borderless"
+        <TextView
+            android:id="@+id/textStepCount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
-            android:layout_marginTop="32dp"
-            android:adjustViewBounds="true"
-            android:elevation="@dimen/dp_16"
-            android:onClick="@{v -> listener.updateSize(false)}"
+            android:layout_marginBottom="32dp"
+            android:text="@{String.valueOf(viewModel.stepCount)}"
+            android:textColor="@android:color/holo_blue_dark"
+            android:textSize="@dimen/sp_18"
+            app:layout_constraintBottom_toTopOf="@+id/recyclerPuzzles"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:text="0" />
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/buttonBack"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            safeClick="@{v -> listener.onBack()}"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:tint="@color/purple"
+            app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_baseline_indeterminate_check_box_24" />
-
-        <TextView
-            android:id="@+id/textSize"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@{String.valueOf(viewModel.currentSize)}"
-            android:textColor="@color/black"
-            android:textSize="@dimen/sp_18"
-            app:layout_constraintBottom_toBottomOf="@+id/buttonDown"
-            app:layout_constraintEnd_toStartOf="@+id/buttonUp"
-            app:layout_constraintStart_toEndOf="@+id/buttonDown"
-            app:layout_constraintTop_toTopOf="@+id/buttonDown"
-            tools:text="@tools:sample/us_phones" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/imageSample"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:adjustViewBounds="true"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textSize"
-            app:layout_constraintVertical_bias="1.0"
-            app:srcCompat="@drawable/sample" />
-
+            app:srcCompat="@drawable/ic_baseline_arrow_back_ios_new_24" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

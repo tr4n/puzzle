@@ -1,24 +1,30 @@
 package com.tr4n.puzzle.data.model
 
 import com.tr4n.puzzle.data.type.Move
-import com.tr4n.puzzle.extension.indexAll
-import com.tr4n.puzzle.extension.indexCount
-import com.tr4n.puzzle.extension.sumIndexOf
+import com.tr4n.puzzle.extension.*
 import kotlin.math.abs
 import kotlin.math.sqrt
 
-data class State(val puzzles: List<Puzzle>) {
+data class State(val puzzleIndexes: List<Int> = emptyList()) {
 
-    private val size = sqrt(puzzles.size.toDouble()).toInt()
+    private val size = sqrt(puzzleIndexes.size.toDouble()).toInt()
 
-    val isTarget get() = puzzles.indexAll { index, puzzle -> puzzle.index == index }
+    val hashCode get() = puzzleIndexes.toStateCode()
 
-    val mahattanDistance get() = puzzles.sumIndexOf { index, item -> abs(item.index - index) }
+    val isTarget get() = puzzleIndexes.indexAll { index, puzzleIndex -> puzzleIndex == index }
 
-    val wrongPosition get() = puzzles.indexCount { index, item -> item.index != index }
+    val mahattanDistance
+        get() = puzzleIndexes.sumIndexOf { index, puzzleIndex ->
+            abs(puzzleIndex / size - index / size) + abs(puzzleIndex % size - index % size)
+        }
+
+    val wrongPositionCount
+        get() = puzzleIndexes.indexCount { index, item ->
+            index != item
+        }
 
     fun move(move: Move): State {
-        val currentEmptyIndex = puzzles.indexOfFirst { it.index == 0 }.takeIf { it > 0 } ?: 0
+        val currentEmptyIndex = puzzleIndexes.indexOfFirst { it == 0 }.takeIf { it > 0 } ?: 0
         val currentRow = currentEmptyIndex / size
         val currentColumn = currentEmptyIndex % size
         val delta = when {
@@ -30,10 +36,10 @@ data class State(val puzzles: List<Puzzle>) {
         }
         val nextIndex = currentEmptyIndex + delta
 
-        val newPuzzles = puzzles.mapIndexed { index, puzzle ->
+        val newPuzzles = puzzleIndexes.mapIndexed { index, puzzle ->
             when (index) {
-                currentEmptyIndex -> puzzles[nextIndex]
-                nextIndex -> puzzles[currentEmptyIndex]
+                currentEmptyIndex -> puzzleIndexes[nextIndex]
+                nextIndex -> puzzleIndexes[currentEmptyIndex]
                 else -> puzzle
             }
         }
@@ -41,7 +47,7 @@ data class State(val puzzles: List<Puzzle>) {
     }
 
     fun getNextStates(): List<State> {
-        val currentEmptyIndex = puzzles.indexOfFirst { it.index == 0 }.takeIf { it > 0 } ?: 0
+        val currentEmptyIndex = puzzleIndexes.indexOfFirst { it == 0 }.takeIf { it > 0 } ?: 0
         val currentRow = currentEmptyIndex / size
         val currentColumn = currentEmptyIndex % size
 
@@ -55,12 +61,8 @@ data class State(val puzzles: List<Puzzle>) {
             }
             val nextIndex = currentEmptyIndex + delta
 
-            val newPuzzles = puzzles.mapIndexed { index, puzzle ->
-                when (index) {
-                    currentEmptyIndex -> puzzles[nextIndex]
-                    nextIndex -> puzzles[currentEmptyIndex]
-                    else -> puzzle
-                }
+            val newPuzzles = puzzleIndexes.toMutableList().apply {
+                swap(currentEmptyIndex, nextIndex)
             }
             State(newPuzzles)
         }

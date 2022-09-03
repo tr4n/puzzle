@@ -5,11 +5,10 @@ import android.content.res.Resources
 import android.graphics.*
 import android.net.Uri
 import android.provider.MediaStore
+import android.util.Log
 import androidx.core.graphics.get
 import androidx.exifinterface.media.ExifInterface
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
+import java.io.*
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -23,6 +22,28 @@ object BitmapUtils {
     private const val VALUE_R = 0.2126
     private const val VALUE_G = 0.7152
     private const val VALUE_B = 0.0722
+
+    private const val ORIENTATION_ROTATE_270: Int = 270
+    private const val ORIENTATION_ROTATE_180: Int = 180
+    private const val ORIENTATION_ROTATE_90: Int = 90
+    private const val ORIENTATION_ROTATE_0: Int = 0
+
+    private const val DEFAULT_DECODED_IMAGE_SIZE = 400
+    const val PREVIEW_DECODED_IMAGE_SIZE = 200
+
+    /**
+     * get bitmap from file
+     */
+    fun getBitmapFromFile(file: File): Bitmap? {
+        var bitmap: Bitmap? = null
+        val options = BitmapFactory.Options()
+        try {
+            bitmap = BitmapFactory.decodeStream(FileInputStream(file), null, options)
+        } catch (e: FileNotFoundException) {
+            Log.e("TAG", e.message ?: "")
+        }
+        return bitmap
+    }
 
     /**
      * rotate image from path image
@@ -43,6 +64,54 @@ object BitmapUtils {
         ).also {
             //   bitmap.autoRecycle()
         }
+    }
+
+    /**
+     * rotate image from path image
+     * return Bitmap image
+     */
+    fun rotateBitmap(path: String, rotate: Float): Bitmap? {
+        val imageFile = File(path)
+        val matrix = Matrix()
+        matrix.postRotate(rotate)
+        val source = getBitmapFromFile(imageFile)
+        source?.let {
+            return Bitmap.createBitmap(
+                it,
+                0,
+                0,
+                it.width,
+                it.height,
+                matrix,
+                true
+            )
+        } ?: return null
+    }
+
+    /**
+     * get rotate image from path image
+     */
+    fun getCameraPhotoOrientation(path: String): Float {
+        val imageFile = File(path)
+        val exif = ExifInterface(imageFile.absolutePath)
+        val orientation = exif.getAttributeInt(
+            ExifInterface.TAG_ORIENTATION,
+            ExifInterface.ORIENTATION_NORMAL
+        )
+        val rotate = when (orientation) {
+            ExifInterface.ORIENTATION_ROTATE_270 -> {
+                ORIENTATION_ROTATE_270.toFloat()
+            }
+            ExifInterface.ORIENTATION_ROTATE_180 -> {
+                ORIENTATION_ROTATE_180.toFloat()
+            }
+            ExifInterface.ORIENTATION_ROTATE_90 -> {
+                ORIENTATION_ROTATE_90.toFloat()
+            }
+            else -> 0f
+        }
+        return rotate
+
     }
 
     /**
@@ -94,8 +163,8 @@ object BitmapUtils {
     fun decodeSampledBitmapFromResource(
         res: Resources,
         resId: Int,
-        reqWidth: Int,
-        reqHeight: Int
+        reqWidth: Int = DEFAULT_DECODED_IMAGE_SIZE,
+        reqHeight: Int = DEFAULT_DECODED_IMAGE_SIZE
     ): Bitmap {
         // First decode with inJustDecodeBounds=true to check dimensions
         return BitmapFactory.Options().run {
@@ -112,7 +181,11 @@ object BitmapUtils {
         }
     }
 
-    fun decodeSampledBitmapFromFile(file: File, reqWidth: Int, reqHeight: Int): Bitmap {
+    fun decodeSampledBitmapFromFile(
+        file: File,
+        reqWidth: Int = DEFAULT_DECODED_IMAGE_SIZE,
+        reqHeight: Int = DEFAULT_DECODED_IMAGE_SIZE
+    ): Bitmap {
         // First decode with inJustDecodeBounds=true to check dimensions
         return BitmapFactory.Options().run {
             inJustDecodeBounds = true

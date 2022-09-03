@@ -2,9 +2,9 @@ package com.tr4n.puzzle.ui.main
 
 import android.view.View
 import android.view.WindowManager
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.navigation.fragment.NavHostFragment
 import com.tr4n.puzzle.R
 import com.tr4n.puzzle.base.BaseActivity
 import com.tr4n.puzzle.databinding.ActivityMainBinding
@@ -48,6 +48,4 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
         window.decorView.systemUiVisibility =
             View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
     }
-
-
 }

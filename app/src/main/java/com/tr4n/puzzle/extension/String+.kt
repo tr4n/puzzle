@@ -20,3 +20,5 @@ fun String.toDate(format: String, locale: Locale = Locale.getDefault()): Date? =
 
 fun String.startsWithPrefix(vararg prefix: String): Boolean =
     prefix.any { startsWith(it, ignoreCase = true) }
+
+fun String.toStatePuzzleIndexList(): List<Int> = split(",").mapNotNull { it.toIntOrNull() }

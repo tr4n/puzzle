@@ -1,12 +1,11 @@
 package com.tr4n.puzzle.ui.game
 
 import android.view.View
-import androidx.recyclerview.widget.GridLayoutManager
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.tr4n.puzzle.R
 import com.tr4n.puzzle.base.BaseFragment
 import com.tr4n.puzzle.base.recyclerview.DataBindingListener
-import com.tr4n.puzzle.base.recyclerview.SimpleBindingAdapter
-import com.tr4n.puzzle.data.model.Puzzle
 import com.tr4n.puzzle.data.type.Move
 import com.tr4n.puzzle.databinding.FragmentGameBinding
 import com.tr4n.puzzle.listener.OnSwipeTouchListener
@@ -18,7 +17,7 @@ class GameFragment : BaseFragment<FragmentGameBinding, GameViewModel>(), GameFra
 
     override val viewModel: GameViewModel by viewModel()
 
-    private val puzzleAdapter = SimpleBindingAdapter<Puzzle>(R.layout.item_puzzle)
+    private val args by navArgs<GameFragmentArgs>()
 
     override fun setBindingVariables() {
         super.setBindingVariables()
@@ -32,19 +31,7 @@ class GameFragment : BaseFragment<FragmentGameBinding, GameViewModel>(), GameFra
     }
 
     override fun initData() {
-        viewModel.updateSize(true)
-    }
-
-    override fun observe() {
-        super.observe()
-        viewModel.currentSize.observe(viewLifecycleOwner) {
-            val layoutManager = GridLayoutManager(requireContext(), it)
-            viewBD.recyclerPuzzles.layoutManager = layoutManager
-        }
-    }
-
-    override fun updateSize(isIncrease: Boolean) {
-        viewModel.updateSize(isIncrease)
+        viewModel.initChallenge(args.challenge)
     }
 
     private fun View.setOnSafeSwipeListener() {
@@ -66,9 +53,23 @@ class GameFragment : BaseFragment<FragmentGameBinding, GameViewModel>(), GameFra
             }
         })
     }
+
+    override fun observe() {
+        super.observe()
+        viewModel.isChallengeSaved.observe(viewLifecycleOwner) { isSaved ->
+            if (isSaved) {
+                findNavController().popBackStack(R.id.dashboardFragment, false)
+                viewModel.isChallengeSaved.value = false
+            }
+        }
+    }
+
+    override fun onBack() {
+        viewModel.saveChallenge()
+    }
 }
 
 interface GameFragmentListener : DataBindingListener {
 
-    fun updateSize(isIncrease: Boolean)
+    fun onBack()
 }

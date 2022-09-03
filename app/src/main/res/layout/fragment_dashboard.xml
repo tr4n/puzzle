@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="com.tr4n.puzzle.R" />
+
+        <variable
+            name="viewModel"
+            type="com.tr4n.puzzle.ui.dashboard.DashboardViewModel" />
+
+        <variable
+            name="listener"
+            type="com.tr4n.puzzle.ui.dashboard.DashboardFragmentListener" />
+    </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:paddingStatusBar="@{true}">
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="5dp"
+                android:paddingHorizontal="@dimen/dp_16"
+                android:paddingTop="@dimen/dp_16">
+
+                <LinearLayout
+                    android:id="@+id/linearAppBar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="start|center"
+                    android:orientation="horizontal"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/imageView"
+                        android:layout_width="@dimen/dp_48"
+                        android:layout_height="@dimen/dp_48"
+                        app:srcCompat="@drawable/img_logo_small"
+                        tools:layout_editor_absoluteX="16dp"
+                        tools:layout_editor_absoluteY="16dp" />
+
+                    <TextView
+                        android:id="@+id/textTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/dp_8"
+                        android:text="@string/app_name"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/sp_24"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="@+id/imageView"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/imageView"
+                        app:layout_constraintTop_toTopOf="@+id/imageView" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/textTitleRecent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="32dp"
+                    android:text="@string/recently"
+                    android:textColor="@color/colorTextLight"
+                    android:textSize="@dimen/sp_16"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/linearAppBar" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerRecentPuzzles"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layoutId="@{R.layout.item_preview_puzzles}"
+                    app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textTitleRecent"
+                    app:listener="@{listener}"
+                    app:simpleData="@{viewModel.recentPreviews}"
+                    app:spanCount="3"
+                    tools:itemCount="3"
+                    tools:listitem="@layout/item_preview_puzzles" />
+
+                <TextView
+                    android:id="@+id/textTitleMyPuzzles"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_32"
+                    android:text="@string/my_puzzles"
+                    android:textColor="@color/colorTextLight"
+                    android:textSize="@dimen/sp_16"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/recyclerRecentPuzzles" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerMyPuzzles"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layoutId="@{R.layout.item_preview_puzzles}"
+                    app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textTitleMyPuzzles"
+                    app:listener="@{listener}"
+                    app:simpleData="@{viewModel.myPreviews}"
+                    app:spanCount="3"
+                    tools:itemCount="6"
+                    tools:listitem="@layout/item_preview_puzzles" />
+
+                <TextView
+                    android:id="@+id/textTitleCategories"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_16"
+                    android:text="@string/categories"
+                    android:textColor="@color/colorTextLight"
+                    android:textSize="@dimen/sp_16"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/recyclerMyPuzzles" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerCategories"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layoutManager="com.google.android.flexbox.FlexboxLayoutManager"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textTitleCategories"
+                    app:spanCount="2"
+                    tools:itemCount="12"
+                    tools:listitem="@layout/item_preview_puzzles" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.core.widget.NestedScrollView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardCamera"
+            safeClick="@{v -> listener.askPermission()}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_marginEnd="@dimen/dp_40"
+            android:layout_marginBottom="@dimen/dp_32"
+            android:foreground="?android:attr/selectableItemBackground"
+            app:cardBackgroundColor="@color/white"
+            app:cardCornerRadius="@dimen/dp_48">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="@dimen/dp_40"
+                android:layout_height="@dimen/dp_40"
+                android:layout_gravity="center"
+                android:layout_margin="@dimen/dp_16"
+                android:src="@drawable/ic_baseline_photo_camera_24"
+                android:tint="@color/purple_500" />
+        </androidx.cardview.widget.CardView>
+    </FrameLayout>
+</layout>

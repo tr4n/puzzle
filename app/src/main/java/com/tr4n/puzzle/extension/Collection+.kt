@@ -55,3 +55,13 @@ fun <T> Iterable<T>.indexCount(predicate: (index: Int, item: T) -> Boolean): Int
     }
     return count
 }
+
+fun <T> MutableList<T>.swap(firstIndex: Int, secondIndex: Int): Boolean {
+    if (firstIndex !in indices || secondIndex !in indices) return false
+    val temporalItem = get(firstIndex)
+    this[firstIndex] = this[secondIndex]
+    this[secondIndex] = temporalItem
+    return true
+}
+
+fun <T> Iterable<T>.toStateCode() = joinToString(prefix = "", separator = ",", postfix = "")

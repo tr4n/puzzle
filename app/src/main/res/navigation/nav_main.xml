@@ -1,11 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_main"
-    app:startDestination="@id/gameFragment">
+    app:startDestination="@id/dashboardFragment">
 
     <fragment
         android:id="@+id/gameFragment"
         android:name="com.tr4n.puzzle.ui.game.GameFragment"
-        android:label="GameFragment" />
+        android:label="GameFragment"
+        tools:layout="@layout/fragment_game">
+        <argument
+            android:name="challenge"
+            app:argType="com.tr4n.puzzle.data.model.Challenge" />
+    </fragment>
+    <fragment
+        android:id="@+id/dashboardFragment"
+        android:name="com.tr4n.puzzle.ui.dashboard.DashboardFragment"
+        android:label="DashboardFragment"
+        tools:layout="@layout/fragment_dashboard">
+        <action
+            android:id="@+id/action_dashboardFragment_to_cameraFragment"
+            app:destination="@id/cameraFragment" />
+        <action
+            android:id="@+id/action_dashboardFragment_to_gameFragment"
+            app:destination="@id/gameFragment" />
+        <action
+            android:id="@+id/action_dashboardFragment_to_reviewImageFragment"
+            app:destination="@id/reviewImageFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/cameraFragment"
+        android:name="com.tr4n.puzzle.ui.camera.CameraFragment"
+        android:label="CameraFragment"
+        tools:layout="@layout/fragment_camera">
+        <action
+            android:id="@+id/action_cameraFragment_to_reviewImageFragment"
+            app:destination="@id/reviewImageFragment"
+            app:enterAnim="@anim/slice_from_bottom"
+            app:exitAnim="@anim/fade_out" />
+    </fragment>
+    <fragment
+        android:id="@+id/reviewImageFragment"
+        android:name="com.tr4n.puzzle.ui.review.ReviewImageFragment"
+        android:label="ReviewImageFragment"
+        tools:layout="@layout/fragment_review_image">
+        <action
+            android:id="@+id/action_reviewImageFragment_to_gameFragment"
+            app:destination="@id/gameFragment" />
+    </fragment>
 </navigation>

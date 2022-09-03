@@ -20,9 +20,9 @@ open class SimpleBindingAdapter<T>(
             setVariable(BR.item, item)
 //            setVariable(BR.position, position)
 //            setVariable(BR.isLast, position == itemCount - 1)
-//            listener?.let {
-//                setVariable(BR.listener, it)
-//            }
+            listener?.let {
+                setVariable(BR.listener, it)
+            }
             executePendingBindings()
         }
     }

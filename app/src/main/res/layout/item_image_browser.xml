@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/dp_100"
+    android:layout_height="@dimen/dp_100"
+    android:background="@drawable/bg_dash_radius_16">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:layout_width="@dimen/dp_32"
+        android:layout_height="@dimen/dp_32"
+        android:layout_gravity="center"
+        android:src="@drawable/ic_baseline_image_search_24"
+        android:tint="@color/gray" />
+</FrameLayout>
