@@ -17,9 +17,11 @@ import androidx.annotation.DrawableRes
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.DrawableCompat
+import androidx.core.widget.NestedScrollView
 import androidx.databinding.BindingAdapter
 import com.google.android.material.snackbar.Snackbar
 import com.tr4n.puzzle.BuildConfig
+
 
 fun View.showSnackBar(data: Any, length: Int = Snackbar.LENGTH_LONG) {
     val message = when (data) {
@@ -246,4 +248,28 @@ fun WebView.enableFitScreen() {
         useWideViewPort = true
         layoutAlgorithm = WebSettings.LayoutAlgorithm.TEXT_AUTOSIZING
     }
+}
+
+fun NestedScrollView.setOnScrollListener(
+    onScrollDown: () -> Unit = {},
+    onScrollUp: () -> Unit = {},
+    onScrollTop: () -> Unit = {},
+    onScrollBottom: () -> Unit = {}
+) {
+    setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { v, scrollX, scrollY, oldScrollX, oldScrollY -> // the delay of the extension of the FAB is set for 12 items
+        if (scrollY > oldScrollY) {
+            onScrollDown()
+        }
+        if (scrollY < oldScrollY) {
+            onScrollUp()
+        }
+
+        if (scrollY == 0) {
+            onScrollTop()
+        }
+
+        if (scrollY == (v.measuredHeight - v.getChildAt(0).measuredHeight)) {
+            onScrollBottom()
+        }
+    })
 }

@@ -17,8 +17,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginVertical="@dimen/dp_4"
-        android:layout_marginEnd="@dimen/dp_8"
+        app:ratioBaseWidth="@{1f}"
+        app:widthPercent="@{0.3f}"
         android:foreground="?android:attr/selectableItemBackground"
         app:safeClick="@{v -> listener.onPreviewClick(item)}"
         tools:layout_width="@dimen/dp_100">
@@ -26,6 +26,8 @@
         <androidx.cardview.widget.CardView
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:layout_marginHorizontal="@dimen/dp_4"
+            android:layout_marginVertical="@dimen/dp_4"
             app:cardCornerRadius="@dimen/dp_8"
             app:isVisible="@{item.preview != null }"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -46,6 +48,8 @@
         <FrameLayout
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:layout_marginHorizontal="@dimen/dp_4"
+            android:layout_marginVertical="@dimen/dp_4"
             android:background="@drawable/bg_dash_radius_16"
             android:foreground="?android:attr/selectableItemBackground"
             app:isVisible="@{item.preview == null }"

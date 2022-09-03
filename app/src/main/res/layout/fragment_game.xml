@@ -84,6 +84,7 @@
 
         <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/buttonBack"
+            android:foreground="?android:attr/selectableItemBackground"
             style="@style/Widget.AppCompat.Button.Borderless"
             safeClick="@{v -> listener.onBack()}"
             android:layout_width="wrap_content"

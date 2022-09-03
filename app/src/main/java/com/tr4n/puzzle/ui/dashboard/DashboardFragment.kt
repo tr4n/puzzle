@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import com.tr4n.puzzle.R
 import com.tr4n.puzzle.base.BaseFragment
@@ -11,6 +12,8 @@ import com.tr4n.puzzle.base.recyclerview.DataBindingListener
 import com.tr4n.puzzle.data.model.PreviewChallenge
 import com.tr4n.puzzle.databinding.FragmentDashboardBinding
 import com.tr4n.puzzle.extension.navigateWithAnim
+import com.tr4n.puzzle.extension.setAnimationResource
+import com.tr4n.puzzle.extension.setOnScrollListener
 import com.tr4n.puzzle.ui.game.GameFragmentArgs
 import com.tr4n.puzzle.util.DialogUtils
 import com.tr4n.puzzle.util.RequestPermissionListener
@@ -34,6 +37,22 @@ class DashboardFragment : BaseFragment<FragmentDashboardBinding, DashboardViewMo
 
     override fun setUpView() {
         setTextColorStatusBar(true)
+        viewBD.nestedScrolLView.setOnScrollListener(
+            onScrollTop = {
+                viewBD.cardCamera.setAnimationResource(android.R.anim.fade_in, onEnd = {
+                    viewBD.cardCamera.isVisible = true
+                })
+            }, onScrollDown = {
+                viewBD.cardCamera.setAnimationResource(android.R.anim.fade_out, onEnd = {
+                    viewBD.cardCamera.isVisible = false
+                })
+            },
+            onScrollBottom = {
+                viewBD.cardCamera.setAnimationResource(android.R.anim.fade_in, onEnd = {
+                    viewBD.cardCamera.isVisible = true
+                })
+            }
+        )
     }
 
     override fun initData() {

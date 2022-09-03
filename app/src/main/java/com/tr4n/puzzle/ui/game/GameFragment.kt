@@ -59,7 +59,6 @@ class GameFragment : BaseFragment<FragmentGameBinding, GameViewModel>(), GameFra
         viewModel.isChallengeSaved.observe(viewLifecycleOwner) { isSaved ->
             if (isSaved) {
                 findNavController().popBackStack(R.id.dashboardFragment, false)
-                viewModel.isChallengeSaved.value = false
             }
         }
     }

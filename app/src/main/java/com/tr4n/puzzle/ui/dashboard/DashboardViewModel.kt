@@ -21,6 +21,7 @@ class DashboardViewModel : BaseViewModel() {
 
     val recentPreviews = MutableLiveData<List<PreviewChallenge>>()
     val myPreviews = MutableLiveData<List<PreviewChallenge>>()
+    val categoryPreviews = MutableLiveData<List<PreviewChallenge>>()
 
     val isTemporaryFileSaved = MutableLiveData<Boolean>()
 
@@ -37,6 +38,7 @@ class DashboardViewModel : BaseViewModel() {
         }
         getRecentPreviewData()
         getMyPreviewData()
+        getCategoryPreviewData()
     }
 
     private fun getMyPreviewData() {
@@ -47,6 +49,10 @@ class DashboardViewModel : BaseViewModel() {
     private fun getRecentPreviewData() {
         val previews = allPreviews.sortedByDescending { it.challenge.updatedAt }.take(3)
         recentPreviews.value = previews
+    }
+
+    private fun getCategoryPreviewData() {
+        categoryPreviews.value = allPreviews
     }
 
     fun saveSelectedImage(uri: Uri?) = viewModelScope.launch {

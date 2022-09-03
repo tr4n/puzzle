@@ -14,6 +14,7 @@ import androidx.annotation.*
 import androidx.core.content.ContextCompat.getColor
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.GridLayoutManager
@@ -135,6 +136,28 @@ fun View.setVisible(isVisible: Boolean) {
 @BindingAdapter("isInvisible")
 fun View.setInvisible(isInvisible: Boolean) {
     this.isInvisible = isInvisible
+}
+
+@BindingAdapter(value = ["widthPercent", "heightPercent"], requireAll = false)
+fun View.setLayoutPercent(widthPercent: Float?, heightPercent: Float?) {
+    updateLayoutParams<ViewGroup.LayoutParams> {
+        widthPercent?.let {
+            width = (Constant.screenWidth * it).toInt()
+        }
+        heightPercent?.let {
+            height = (Constant.screenHeight * it).toInt()
+        }
+    }
+}
+
+@BindingAdapter(value = ["ratioBaseWidth", "ratioBaseHeight"], requireAll = false)
+fun View.setRatio(ratioBaseWidth: Float?, ratioBaseHeight: Float?) {
+    updateLayoutParams<ViewGroup.LayoutParams> {
+        when {
+            ratioBaseWidth != null -> height = (width * ratioBaseWidth).toInt()
+            ratioBaseHeight != null -> width = (height * ratioBaseHeight).toInt()
+        }
+    }
 }
 
 @BindingAdapter(

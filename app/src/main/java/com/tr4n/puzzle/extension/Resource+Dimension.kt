@@ -4,6 +4,7 @@ import android.content.res.Resources
 import android.util.TypedValue
 import android.util.TypedValue.applyDimension
 
+
 fun Resources.getSP(value: Float) =
     applyDimension(TypedValue.COMPLEX_UNIT_SP, value, displayMetrics)
 

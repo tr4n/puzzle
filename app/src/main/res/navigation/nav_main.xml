@@ -27,7 +27,9 @@
             app:destination="@id/gameFragment" />
         <action
             android:id="@+id/action_dashboardFragment_to_reviewImageFragment"
-            app:destination="@id/reviewImageFragment" />
+            app:destination="@id/reviewImageFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out" />
     </fragment>
     <fragment
         android:id="@+id/cameraFragment"
@@ -37,7 +39,7 @@
         <action
             android:id="@+id/action_cameraFragment_to_reviewImageFragment"
             app:destination="@id/reviewImageFragment"
-            app:enterAnim="@anim/slice_from_bottom"
+            app:enterAnim="@anim/fade_in"
             app:exitAnim="@anim/fade_out" />
     </fragment>
     <fragment

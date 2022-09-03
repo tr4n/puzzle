@@ -19,9 +19,10 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:paddingStatusBar="@{true}">
+        app:marginToStatusBar="@{0}">
 
         <androidx.core.widget.NestedScrollView
+            android:id="@+id/nestedScrolLView"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -35,7 +36,7 @@
                     android:id="@+id/linearAppBar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="start|center"
+                    android:gravity="start|bottom"
                     android:orientation="horizontal"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -43,8 +44,8 @@
 
                     <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/imageView"
-                        android:layout_width="@dimen/dp_48"
-                        android:layout_height="@dimen/dp_48"
+                        android:layout_width="@dimen/dp_40"
+                        android:layout_height="@dimen/dp_40"
                         app:srcCompat="@drawable/img_logo_small"
                         tools:layout_editor_absoluteX="16dp"
                         tools:layout_editor_absoluteY="16dp" />
@@ -68,20 +69,26 @@
                     android:id="@+id/textTitleRecent"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="32dp"
+                    android:layout_marginTop="@dimen/dp_32"
                     android:text="@string/recently"
-                    android:textColor="@color/colorTextLight"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:textColor="@color/colorTextDark"
+                    android:textStyle="bold"
+                    app:drawableEndCompat="@drawable/ic_baseline_keyboard_arrow_right_24"
                     android:textSize="@dimen/sp_16"
                     app:layout_constraintStart_toStartOf="parent"
+                    app:drawableTint="@color/black"
                     app:layout_constraintTop_toBottomOf="@+id/linearAppBar" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerRecentPuzzles"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
+                    android:layout_marginTop="@dimen/dp_12"
+                    android:orientation="horizontal"
+                    android:overScrollMode="never"
                     app:layoutId="@{R.layout.item_preview_puzzles}"
-                    app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                    app:layoutManager="com.google.android.flexbox.FlexboxLayoutManager"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/textTitleRecent"
@@ -97,25 +104,32 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/dp_32"
                     android:text="@string/my_puzzles"
-                    android:textColor="@color/colorTextLight"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:textColor="@color/colorTextDark"
+                    android:textStyle="bold"
+                    app:drawableEndCompat="@drawable/ic_baseline_keyboard_arrow_right_24"
                     android:textSize="@dimen/sp_16"
                     app:layout_constraintStart_toStartOf="parent"
+                    app:drawableTint="@color/black"
                     app:layout_constraintTop_toBottomOf="@+id/recyclerRecentPuzzles" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerMyPuzzles"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
+                    android:layout_marginTop="@dimen/dp_12"
+                    android:orientation="horizontal"
+                    android:overScrollMode="never"
+                    app:drawableEndCompat="@drawable/ic_baseline_keyboard_arrow_right_24"
                     app:layoutId="@{R.layout.item_preview_puzzles}"
-                    app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                    app:layoutManager="com.google.android.flexbox.FlexboxLayoutManager"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/textTitleMyPuzzles"
                     app:listener="@{listener}"
                     app:simpleData="@{viewModel.myPreviews}"
                     app:spanCount="3"
-                    tools:itemCount="6"
+                    tools:itemCount="2"
                     tools:listitem="@layout/item_preview_puzzles" />
 
                 <TextView
@@ -124,9 +138,13 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/dp_16"
                     android:text="@string/categories"
-                    android:textColor="@color/colorTextLight"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:textColor="@color/colorTextDark"
                     android:textSize="@dimen/sp_16"
+                    android:textStyle="bold"
+                    app:drawableEndCompat="@drawable/ic_baseline_keyboard_arrow_right_24"
                     app:layout_constraintStart_toStartOf="parent"
+                    app:drawableTint="@color/black"
                     app:layout_constraintTop_toBottomOf="@+id/recyclerMyPuzzles" />
 
                 <androidx.recyclerview.widget.RecyclerView
@@ -134,14 +152,18 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
+                    android:layout_marginTop="@dimen/dp_12"
+                    android:overScrollMode="never"
+                    app:layoutId="@{R.layout.item_preview_puzzles}"
+                    app:listener="@{listener}"
+                    app:simpleData="@{viewModel.categoryPreviews}"
                     app:layoutManager="com.google.android.flexbox.FlexboxLayoutManager"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/textTitleCategories"
                     app:spanCount="2"
-                    tools:itemCount="12"
+                    tools:itemCount="2"
                     tools:listitem="@layout/item_preview_puzzles" />
-
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.core.widget.NestedScrollView>
 

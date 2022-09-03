@@ -1,14 +1,11 @@
 package com.tr4n.puzzle.extension
 
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.widget.Toast
 import androidx.annotation.StringRes
-import com.tr4n.puzzle.R
-import java.util.*
 
 
 fun Context.checkAppInstalledOrNot(packetName: String): Boolean {

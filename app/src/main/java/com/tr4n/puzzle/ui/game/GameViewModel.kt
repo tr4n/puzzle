@@ -110,7 +110,13 @@ class GameViewModel : BaseViewModel() {
     private fun updateNewState(newState: State) {
         state = newState
         challenge.state = newState.hashCode
-        currentPuzzles.value = newState.puzzleIndexes.map { originPuzzles[it] }
+        currentPuzzles.value = newState.puzzleIndexes.map {
+            if (it == 0 && newState.isTarget) {
+                originPuzzles[it].copy(show = true)
+            } else {
+                originPuzzles[it]
+            }
+        }
     }
 }
 
