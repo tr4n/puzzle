@@ -8,18 +8,19 @@ import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import com.tr4n.puzzle.R
 import com.tr4n.puzzle.base.BaseFragment
-import com.tr4n.puzzle.base.recyclerview.DataBindingListener
 import com.tr4n.puzzle.data.model.PreviewChallenge
+import com.tr4n.puzzle.data.type.Category
 import com.tr4n.puzzle.databinding.FragmentDashboardBinding
 import com.tr4n.puzzle.extension.navigateWithAnim
 import com.tr4n.puzzle.extension.setAnimationResource
 import com.tr4n.puzzle.extension.setOnScrollListener
+import com.tr4n.puzzle.listener.OnSimpleItemClick
+import com.tr4n.puzzle.ui.category.CategoryFragmentArgs
 import com.tr4n.puzzle.ui.game.GameFragmentArgs
 import com.tr4n.puzzle.util.DialogUtils
 import com.tr4n.puzzle.util.RequestPermissionListener
 import com.tr4n.puzzle.util.requestPermissions
 import org.koin.androidx.viewmodel.ext.android.viewModel
-
 
 class DashboardFragment : BaseFragment<FragmentDashboardBinding, DashboardViewModel>(),
     DashboardFragmentListener {
@@ -109,13 +110,19 @@ class DashboardFragment : BaseFragment<FragmentDashboardBinding, DashboardViewMo
             })
     }
 
-    override fun onPreviewClick(preview: PreviewChallenge) {
-        if (preview.challenge.imageName.isBlank()) {
-            browseImages()
-            return
+    override fun onClick(item: PreviewChallenge) {
+        when {
+            item.challenge.imageName.isBlank() -> browseImages()
+            item.title.isNotBlank() -> {
+                val category = Category.fromValue(item.challenge.type) ?: return
+                val bundle = CategoryFragmentArgs.Builder(category).build().toBundle()
+                findNavController().navigateWithAnim(R.id.categoryFragment, bundle)
+            }
+            else -> {
+                val bundle = GameFragmentArgs.Builder(item.challenge).build().toBundle()
+                findNavController().navigateWithAnim(R.id.gameFragment, bundle)
+            }
         }
-        val bundle = GameFragmentArgs.Builder(preview.challenge).build().toBundle()
-        findNavController().navigateWithAnim(R.id.gameFragment, bundle)
     }
 
     private val selectImageLauncher =
@@ -139,8 +146,6 @@ class DashboardFragment : BaseFragment<FragmentDashboardBinding, DashboardViewMo
     }
 }
 
-interface DashboardFragmentListener : DataBindingListener {
+interface DashboardFragmentListener : OnSimpleItemClick<PreviewChallenge> {
     fun askPermission()
-
-    fun onPreviewClick(preview: PreviewChallenge)
 }

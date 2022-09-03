@@ -20,3 +20,8 @@ fun Activity.startActivityForResult(@NonNull intent: Intent, requestCode: Int, f
         flags?.let(intent::setFlags)
     }, requestCode)
 }
+
+fun Activity.isMainLauncher(): Boolean {
+    return intent.action == Intent.ACTION_MAIN
+        && intent.categories?.contains(Intent.CATEGORY_LAUNCHER) == true
+}

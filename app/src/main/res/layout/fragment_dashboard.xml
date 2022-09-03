@@ -52,7 +52,7 @@
 
                     <TextView
                         android:id="@+id/textTitle"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/dp_8"
                         android:text="@string/app_name"
@@ -88,6 +88,7 @@
                     android:orientation="horizontal"
                     android:overScrollMode="never"
                     app:layoutId="@{R.layout.item_preview_puzzles}"
+                    android:nestedScrollingEnabled="false"
                     app:layoutManager="com.google.android.flexbox.FlexboxLayoutManager"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -122,6 +123,7 @@
                     android:overScrollMode="never"
                     app:drawableEndCompat="@drawable/ic_baseline_keyboard_arrow_right_24"
                     app:layoutId="@{R.layout.item_preview_puzzles}"
+                    android:nestedScrollingEnabled="false"
                     app:layoutManager="com.google.android.flexbox.FlexboxLayoutManager"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -151,18 +153,19 @@
                     android:id="@+id/recyclerCategories"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
+                    android:nestedScrollingEnabled="false"
                     android:layout_marginTop="@dimen/dp_12"
                     android:overScrollMode="never"
                     app:layoutId="@{R.layout.item_preview_puzzles}"
                     app:listener="@{listener}"
                     app:simpleData="@{viewModel.categoryPreviews}"
-                    app:layoutManager="com.google.android.flexbox.FlexboxLayoutManager"
+                    android:orientation="vertical"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/textTitleCategories"
-                    app:spanCount="2"
-                    tools:itemCount="2"
+                    app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                    app:spanCount="3"
+                    tools:itemCount="3"
                     tools:listitem="@layout/item_preview_puzzles" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.core.widget.NestedScrollView>

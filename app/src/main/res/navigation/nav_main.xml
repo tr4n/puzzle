@@ -30,6 +30,9 @@
             app:destination="@id/reviewImageFragment"
             app:enterAnim="@anim/fade_in"
             app:exitAnim="@anim/fade_out" />
+        <action
+            android:id="@+id/action_dashboardFragment_to_categoryFragment"
+            app:destination="@id/categoryFragment" />
     </fragment>
     <fragment
         android:id="@+id/cameraFragment"
@@ -50,5 +53,14 @@
         <action
             android:id="@+id/action_reviewImageFragment_to_gameFragment"
             app:destination="@id/gameFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/categoryFragment"
+        android:name="com.tr4n.puzzle.ui.category.CategoryFragment"
+        android:label="CategoryFragment"
+        tools:layout="@layout/fragment_category" >
+        <argument
+            android:name="category"
+            app:argType="com.tr4n.puzzle.data.type.Category" />
     </fragment>
 </navigation>

@@ -13,7 +13,6 @@ import com.tr4n.puzzle.di.App
 import com.tr4n.puzzle.util.BitmapUtils
 import com.tr4n.puzzle.util.BitmapUtils.cropCenter
 import com.tr4n.puzzle.util.BitmapUtils.split
-import com.tr4n.puzzle.util.FileUtils
 import com.tr4n.puzzle.util.solution.PuzzleSolution
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -47,9 +46,7 @@ class GameViewModel : BaseViewModel() {
 
     fun initChallenge(challenge: Challenge) {
         this.challenge = challenge
-
-        val file = FileUtils.getImageFile(challenge.imageName)
-        fullBitmap = BitmapUtils.decodeSampledBitmapFromFile(file).cropCenter()
+        fullBitmap = BitmapUtils.getBitmapFromImageName(challenge.imageName)?.cropCenter() ?: return
         originPuzzles = fullBitmap.split(challenge.size).mapIndexed { index, bitmap ->
             Puzzle(index, bitmap = bitmap)
         }

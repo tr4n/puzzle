@@ -12,9 +12,15 @@ interface ChallengeDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(challenge: Challenge)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(challenges: List<Challenge>)
+
     @Update
     suspend fun update(challenge: Challenge)
 
     @Delete
     suspend fun delete(challenge: Challenge)
+
+    @Query("SELECT * FROM challenge WHERE type = :categoryValue")
+    suspend fun getChallengesByCategory(categoryValue: Int): List<Challenge>
 }

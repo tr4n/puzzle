@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:width="480dp"
+        android:height="@dimen/dp_480"
+        android:drawable="@color/white"
+        android:gravity="center" />
+
+    <item
+        android:width="@dimen/dp_64"
+        android:height="@dimen/dp_64"
+        android:gravity="center">
+        <bitmap
+            android:gravity="center"
+            android:src="@drawable/img_logo_small" />
+    </item>
+</layer-list>

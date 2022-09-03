@@ -1,20 +1,14 @@
 package com.tr4n.puzzle.base
 
-import android.content.Context
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.View
 import androidx.annotation.LayoutRes
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
 import com.tr4n.puzzle.extension.showSnackBar
 import com.tr4n.puzzle.extension.showToast
-import com.tr4n.puzzle.util.shouldAskPermissions
-import java.util.ArrayList
 
 abstract class BaseActivity<VB : ViewDataBinding, VM : BaseViewModel> : FragmentActivity() {
 
@@ -62,5 +56,8 @@ abstract class BaseActivity<VB : ViewDataBinding, VM : BaseViewModel> : Fragment
 //                midButton(R.string.ok)
 //            }
         })
+    }
+
+    override fun onBackPressed() {
     }
 }

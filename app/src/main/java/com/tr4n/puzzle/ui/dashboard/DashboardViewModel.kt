@@ -4,11 +4,10 @@ import android.net.Uri
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.tr4n.puzzle.base.BaseViewModel
+import com.tr4n.puzzle.data.model.Challenge
 import com.tr4n.puzzle.data.model.PreviewChallenge
 import com.tr4n.puzzle.data.repository.ChallengeRepository
-import com.tr4n.puzzle.util.BitmapUtils
-import com.tr4n.puzzle.util.BitmapUtils.PREVIEW_DECODED_IMAGE_SIZE
-import com.tr4n.puzzle.util.BitmapUtils.cropCenter
+import com.tr4n.puzzle.data.type.Category
 import com.tr4n.puzzle.util.FileUtils
 import kotlinx.coroutines.launch
 import org.koin.core.component.inject
@@ -16,8 +15,6 @@ import org.koin.core.component.inject
 class DashboardViewModel : BaseViewModel() {
 
     private val challengeRepository by inject<ChallengeRepository>()
-
-    private var allPreviews = emptyList<PreviewChallenge>()
 
     val recentPreviews = MutableLiveData<List<PreviewChallenge>>()
     val myPreviews = MutableLiveData<List<PreviewChallenge>>()
@@ -27,31 +24,39 @@ class DashboardViewModel : BaseViewModel() {
 
     fun getLocalChallenges() = viewModelScope.launch {
         val challenges = challengeRepository.getChallenges()
-        allPreviews = challenges.map { challenge ->
-            val file = FileUtils.getImageFile(challenge.imageName)
-            val bitmap = BitmapUtils.decodeSampledBitmapFromFile(
-                file,
-                PREVIEW_DECODED_IMAGE_SIZE,
-                PREVIEW_DECODED_IMAGE_SIZE
-            ).cropCenter()
-            PreviewChallenge(challenge, bitmap)
-        }
-        getRecentPreviewData()
-        getMyPreviewData()
-        getCategoryPreviewData()
+        getRecentPreviewData(challenges)
+        getMyPreviewData(challenges)
+        getCategoryPreviewData(challenges)
     }
 
-    private fun getMyPreviewData() {
-        val previews = allPreviews.sortedByDescending { it.challenge.createdAt }.take(5)
+    private fun getMyPreviewData(challenges: List<Challenge>) {
+        val previews = challenges.filter { it.type == 0 }
+            .sortedByDescending { it.createdAt }
+            .take(5)
+            .map { challenge ->
+                PreviewChallenge(challenge)
+            }
         myPreviews.value = listOf(PreviewChallenge()) + previews
     }
 
-    private fun getRecentPreviewData() {
-        val previews = allPreviews.sortedByDescending { it.challenge.updatedAt }.take(3)
+    private fun getRecentPreviewData(challenges: List<Challenge>) {
+        val previews = challenges.sortedByDescending { it.updatedAt }
+            .take(3)
+            .map { challenge ->
+                PreviewChallenge(challenge)
+            }
         recentPreviews.value = previews
     }
 
-    private fun getCategoryPreviewData() {
+    private fun getCategoryPreviewData(challenges: List<Challenge>) {
+        val allPreviews = challenges.groupBy { it.type }
+            .mapNotNull { (type, challengeList) ->
+                val category = Category.fromValue(type)
+                val challenge = challengeList.firstOrNull()
+                if (category != null && challenge != null) {
+                    PreviewChallenge(challenge, category.keyword)
+                } else null
+            }
         categoryPreviews.value = allPreviews
     }
 

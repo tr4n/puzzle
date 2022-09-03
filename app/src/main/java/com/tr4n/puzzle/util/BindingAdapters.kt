@@ -25,6 +25,7 @@ import com.tr4n.puzzle.base.recyclerview.BaseDiffUtilItemCallback
 import com.tr4n.puzzle.base.recyclerview.BindAbleAdapter
 import com.tr4n.puzzle.base.recyclerview.DataBindingListener
 import com.tr4n.puzzle.base.recyclerview.SimpleBindingAdapter
+import com.tr4n.puzzle.data.type.Category
 import com.tr4n.puzzle.extension.navigationBarHeight
 import com.tr4n.puzzle.extension.statusBarHeight
 import java.text.SimpleDateFormat
@@ -266,3 +267,21 @@ fun View.setLayoutWidthHeight(heightDimen: Float?, widthDimen: Float?) {
     }
 }
 
+@BindingAdapter("fileName")
+fun ImageView.setImageFromFile(fileName: String) {
+    if (fileName.endsWith(".JPG", ignoreCase = true)) {
+        val file = FileUtils.getFile(fileName)
+        Glide.with(this)
+            .load(file)
+            .centerCrop()
+            .override(BitmapUtils.PREVIEW_DECODED_IMAGE_SIZE)
+            .into(this)
+    } else {
+        val drawableRes = Category.getImageDrawableRes(fileName) ?: return
+        Glide.with(this)
+            .load(drawableRes)
+            .centerCrop()
+            .override(BitmapUtils.PREVIEW_DECODED_IMAGE_SIZE)
+            .into(this)
+    }
+}

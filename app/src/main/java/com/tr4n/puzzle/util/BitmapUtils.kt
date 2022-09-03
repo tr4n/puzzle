@@ -8,6 +8,8 @@ import android.provider.MediaStore
 import android.util.Log
 import androidx.core.graphics.get
 import androidx.exifinterface.media.ExifInterface
+import com.tr4n.puzzle.data.type.Category
+import com.tr4n.puzzle.di.App.context
 import java.io.*
 import kotlin.math.abs
 import kotlin.math.max
@@ -158,6 +160,16 @@ object BitmapUtils {
             postScale(scaleWidth, scaleHeight)
         }
         return Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix, false)
+    }
+
+    fun getBitmapFromImageName(imageName: String, size: Int = DEFAULT_DECODED_IMAGE_SIZE): Bitmap? {
+        return if (imageName.endsWith(".JPG", ignoreCase = true)) {
+            val file = FileUtils.getFile(imageName)
+            decodeSampledBitmapFromFile(file, size, size)
+        } else {
+            val drawableRes = Category.getImageDrawableRes(imageName) ?: return null
+            decodeSampledBitmapFromResource(context.resources, drawableRes, size, size)
+        }
     }
 
     fun decodeSampledBitmapFromResource(

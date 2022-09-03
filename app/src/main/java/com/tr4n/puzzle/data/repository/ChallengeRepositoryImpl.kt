@@ -15,7 +15,15 @@ class ChallengeRepositoryImpl(
         database.challengeDao().insert(challenge)
     }
 
+    override suspend fun addChallenges(challenges: List<Challenge>) {
+        database.challengeDao().insertAll(challenges)
+    }
+
     override suspend fun saveChallenge(challenge: Challenge) {
         database.challengeDao().update(challenge)
+    }
+
+    override suspend fun getChallengesByCategory(categoryValue: Int): List<Challenge> {
+        return database.challengeDao().getChallengesByCategory(categoryValue)
     }
 }

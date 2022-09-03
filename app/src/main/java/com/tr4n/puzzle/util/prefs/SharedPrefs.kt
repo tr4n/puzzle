@@ -49,6 +49,42 @@ object SharedPrefs  {
         }
     }
 
+    inline operator fun <reified T> get(key: String, default: T): T =
+        App.context.getSharedPreferences(SharedPrefKey.PREFS_NAME, Context.MODE_PRIVATE)
+            .runCatching {
+                when (T::class) {
+                    String::class -> getString(key, default as? String) as? T
+
+                    Boolean::class -> getBoolean(key, (default as? Boolean) == true) as? T
+
+                    Float::class -> getFloat(key, default as? Float ?: 0f) as? T
+
+                    Int::class -> getInt(key, default as? Int ?: 0) as? T
+
+                    Long::class -> getLong(key, default as? Long ?: 0L) as? T
+
+                    else -> Gson().fromJson(getString(key, default as? String), T::class.java)
+                }
+            }.getOrNull() ?: default
+
+    inline operator fun <reified T> get(key: String): T? =
+        App.context.getSharedPreferences(SharedPrefKey.PREFS_NAME, Context.MODE_PRIVATE)
+            .runCatching {
+                when (T::class) {
+                    String::class -> getString(key, "")
+
+                    Boolean::class -> getBoolean(key, false)
+
+                    Float::class -> getFloat(key, 0f)
+
+                    Int::class -> getInt(key, 0)
+
+                    Long::class -> getLong(key, 0L)
+
+                    else -> Gson().fromJson(getString(key, ""), T::class.java)
+                }
+            }.getOrNull() as? T
+
     fun <T> putList(key: String, list: List<T>) {
         val value = gson.toJson(list)
         sharedPreferences.edit().putString(key, value).apply()

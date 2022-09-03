@@ -29,7 +29,7 @@ object FileUtils {
             }
         }
 
-    fun getImageFile(fileName: String): File {
+    fun getFile(fileName: String): File {
         return File(folderIMAGES, fileName)
     }
 
