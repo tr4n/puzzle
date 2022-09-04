@@ -4,9 +4,12 @@
         <color android:color="@color/white" />
     </item>
 
-    <item android:gravity="center">
+    <item
+        android:width="@dimen/dp_150"
+        android:height="@dimen/dp_150"
+        android:gravity="center">
         <bitmap
             android:gravity="center"
-            android:src="@drawable/img_logo_small" />
+            android:src="@drawable/img_logo_128" />
     </item>
 </layer-list>

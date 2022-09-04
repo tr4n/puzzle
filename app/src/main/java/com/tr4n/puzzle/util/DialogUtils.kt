@@ -44,6 +44,13 @@ object DialogUtils {
                 keyCode == KeyEvent.KEYCODE_BACK
             }
             .create()
+        alert.window?.apply {
+            setLayout(
+                (Constant.screenWidth * 0.9f).toInt(),
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+            setBackgroundDrawableResource(R.color.colorTransparent)
+        }
         return alert
     }
 }

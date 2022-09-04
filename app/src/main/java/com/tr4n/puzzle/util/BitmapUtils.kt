@@ -30,8 +30,8 @@ object BitmapUtils {
     private const val ORIENTATION_ROTATE_90: Int = 90
     private const val ORIENTATION_ROTATE_0: Int = 0
 
-    private const val DEFAULT_DECODED_IMAGE_SIZE = 400
-    const val PREVIEW_DECODED_IMAGE_SIZE = 200
+    const val DEFAULT_DECODED_IMAGE_SIZE = 480
+    const val PREVIEW_DECODED_IMAGE_SIZE = 256
 
     /**
      * get bitmap from file

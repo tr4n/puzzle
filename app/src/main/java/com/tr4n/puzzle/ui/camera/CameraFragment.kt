@@ -1,11 +1,12 @@
 package com.tr4n.puzzle.ui.camera
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.util.Log
-import androidx.camera.core.CameraSelector
-import androidx.camera.core.ImageCapture
-import androidx.camera.core.ImageCaptureException
-import androidx.camera.core.Preview
+import android.view.MotionEvent
+import android.view.View
+import android.view.ViewTreeObserver
+import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
@@ -14,6 +15,7 @@ import com.tr4n.puzzle.base.BaseFragment
 import com.tr4n.puzzle.base.recyclerview.DataBindingListener
 import com.tr4n.puzzle.databinding.FragmentCameraBinding
 import com.tr4n.puzzle.util.FileUtils
+import com.tr4n.puzzle.util.LogUtils
 import com.tr4n.puzzle.util.allPermissionsGranted
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -26,6 +28,8 @@ class CameraFragment : BaseFragment<FragmentCameraBinding, CameraViewModel>(),
         get() = R.layout.fragment_camera
 
     override val viewModel: CameraViewModel by viewModel()
+
+    private var cameraX: Camera? = null
 
     override fun setBindingVariables() {
         super.setBindingVariables()
@@ -62,7 +66,8 @@ class CameraFragment : BaseFragment<FragmentCameraBinding, CameraViewModel>(),
 
             try {
                 cameraProvider.unbindAll()
-                cameraProvider.bindToLifecycle(
+                viewBD.previewImage.setUpTapToFocus(initialFocus = true)
+                cameraX = cameraProvider.bindToLifecycle(
                     viewLifecycleOwner,
                     cameraSelector,
                     preview,
@@ -101,6 +106,65 @@ class CameraFragment : BaseFragment<FragmentCameraBinding, CameraViewModel>(),
                 }
             }
         )
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private fun View.setUpTapToFocus(initialFocus: Boolean = false) {
+        afterMeasured {
+            if (initialFocus) focusAtCenter()
+            setOnTouchListener { _, event ->
+                when (event.action) {
+                    MotionEvent.ACTION_DOWN -> true
+                    MotionEvent.ACTION_UP -> {
+                        val factory =
+                            SurfaceOrientedMeteringPointFactory(width.toFloat(), height.toFloat())
+                        val autoFocusPoint = factory.createPoint(event.x, event.y)
+                        try {
+                            val focusAction =
+                                FocusMeteringAction.Builder(
+                                    autoFocusPoint,
+                                    FocusMeteringAction.FLAG_AF
+                                ).disableAutoCancel().build()
+                            cameraX?.cameraControl?.startFocusAndMetering(focusAction)
+                        } catch (e: CameraInfoUnavailableException) {
+                            LogUtils.e("Cannot access camera ${e.message}")
+                        }
+                        true
+                    }
+                    else -> false
+                }
+            }
+        }
+    }
+
+    private fun focusAtCenter() {
+        val autoFocusPoint = SurfaceOrientedMeteringPointFactory(1f, 1f)
+            .createPoint(.5f, .5f)
+        try {
+            val autoFocusAction = FocusMeteringAction.Builder(
+                autoFocusPoint,
+                FocusMeteringAction.FLAG_AF
+            ).disableAutoCancel().build()
+            cameraX?.cameraControl?.startFocusAndMetering(autoFocusAction)
+        } catch (e: CameraInfoUnavailableException) {
+            LogUtils.e("Cannot access camera ${e.message}")
+        }
+    }
+
+    private inline fun View.afterMeasured(crossinline block: () -> Unit) {
+        if (measuredWidth > 0 && measuredHeight > 0) {
+            block()
+        } else {
+            viewTreeObserver.addOnGlobalLayoutListener(object :
+                ViewTreeObserver.OnGlobalLayoutListener {
+                override fun onGlobalLayout() {
+                    if (measuredWidth > 0 && measuredHeight > 0) {
+                        viewTreeObserver.removeOnGlobalLayoutListener(this)
+                        block()
+                    }
+                }
+            })
+        }
     }
 
     companion object {

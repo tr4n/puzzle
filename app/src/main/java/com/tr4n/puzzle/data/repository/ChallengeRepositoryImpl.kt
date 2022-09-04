@@ -26,4 +26,8 @@ class ChallengeRepositoryImpl(
     override suspend fun getChallengesByCategory(categoryValue: Int): List<Challenge> {
         return database.challengeDao().getChallengesByCategory(categoryValue)
     }
+
+    override suspend fun deleteChallenge(challenge: Challenge) {
+        database.challengeDao().delete(challenge)
+    }
 }

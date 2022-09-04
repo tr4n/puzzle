@@ -13,4 +13,6 @@ interface ChallengeRepository {
     suspend fun saveChallenge(challenge: Challenge)
 
     suspend fun addChallenges(challenges: List<Challenge>)
+
+    suspend fun deleteChallenge(challenge: Challenge)
 }

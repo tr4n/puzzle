@@ -23,7 +23,7 @@ class SplashViewModel : BaseViewModel() {
             isDataInitialized.value = true
             return@launch
         }
-        val challenges = Category.values().flatMap { category ->
+        val challenges = Category.values.flatMap { category ->
             category.offlineImages.mapIndexed { index, _ ->
                 Challenge(
                     imageName = category.toImageName(index),

@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.tr4n.puzzle.R
 import com.tr4n.puzzle.base.recyclerview.BaseDiffUtilItemCallback
 import com.tr4n.puzzle.base.recyclerview.BindAbleAdapter
@@ -28,6 +29,7 @@ import com.tr4n.puzzle.base.recyclerview.SimpleBindingAdapter
 import com.tr4n.puzzle.data.type.Category
 import com.tr4n.puzzle.extension.navigationBarHeight
 import com.tr4n.puzzle.extension.statusBarHeight
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.abs
@@ -213,6 +215,40 @@ fun ImageView.setImageTintRes(@ColorRes colorRes: Int) {
     }
 }
 
+@BindingAdapter(value = ["imageFile", "decodedSize"], requireAll = false)
+fun ImageView.setImageFromFile(file: File?, decodedSize: Int? = null) {
+    file ?: return
+    val size = decodedSize ?: BitmapUtils.PREVIEW_DECODED_IMAGE_SIZE
+    Glide.with(this)
+        .load(file)
+        .skipMemoryCache(true)
+        .diskCacheStrategy(DiskCacheStrategy.NONE)
+        .centerCrop()
+        .override(size)
+        .into(this)
+}
+
+
+@BindingAdapter(value = ["fileName", "decodedSize"], requireAll = false)
+fun ImageView.setImageFromFile(fileName: String, decodedSize: Int?) {
+    val size = decodedSize ?: BitmapUtils.PREVIEW_DECODED_IMAGE_SIZE
+    if (fileName.endsWith(".JPG", ignoreCase = true)) {
+        val file = FileUtils.getFile(fileName)
+        Glide.with(this)
+            .load(file)
+            .centerCrop()
+            .override(size)
+            .into(this)
+    } else {
+        val drawableRes = Category.getImageDrawableRes(fileName) ?: return
+        Glide.with(this)
+            .load(drawableRes)
+            .centerCrop()
+            .override(size)
+            .into(this)
+    }
+}
+
 @BindingAdapter("paddingStatusBar")
 fun View.isPaddingStatusBar(shouldPadding: Boolean = false) {
     if (shouldPadding) {
@@ -264,24 +300,5 @@ fun View.setLayoutWidthHeight(heightDimen: Float?, widthDimen: Float?) {
     layoutParams = layoutParams.apply {
         widthDimen?.let { this.width = it.toInt() }
         heightDimen?.let { this.height = it.toInt() }
-    }
-}
-
-@BindingAdapter("fileName")
-fun ImageView.setImageFromFile(fileName: String) {
-    if (fileName.endsWith(".JPG", ignoreCase = true)) {
-        val file = FileUtils.getFile(fileName)
-        Glide.with(this)
-            .load(file)
-            .centerCrop()
-            .override(BitmapUtils.PREVIEW_DECODED_IMAGE_SIZE)
-            .into(this)
-    } else {
-        val drawableRes = Category.getImageDrawableRes(fileName) ?: return
-        Glide.with(this)
-            .load(drawableRes)
-            .centerCrop()
-            .override(BitmapUtils.PREVIEW_DECODED_IMAGE_SIZE)
-            .into(this)
     }
 }

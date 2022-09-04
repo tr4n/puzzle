@@ -7,11 +7,11 @@
 
         <variable
             name="item"
-            type="com.tr4n.puzzle.data.model.PreviewChallenge" />
+            type="com.tr4n.puzzle.data.model.Preview" />
 
         <variable
             name="listener"
-            type="com.tr4n.puzzle.listener.OnSimpleItemClick&lt;com.tr4n.puzzle.data.model.PreviewChallenge&gt;" />
+            type="com.tr4n.puzzle.listener.OnSimpleItemClick&lt;com.tr4n.puzzle.data.model.Preview&gt;" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -43,6 +43,28 @@
                 android:scaleType="fitCenter"
                 app:fileName="@{item.challenge.imageName}"
                 tools:src="@tools:sample/avatars" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:background="@color/colorBlackTransparent44"
+                android:gravity="center"
+                android:maxLength="3"
+                android:text="@{@string/more_count(item.moreCount)}"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sp_26"
+                app:isVisible="@{item.moreCount > 0}"
+                tools:text="+99" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|top"
+                android:src="@drawable/ic_baseline_close_24"
+                android:tint="@color/white"
+                app:isVisible="@{item.ableDeleted}"
+                app:safeClick="@{v -> listener.onClick(item, 0)}" />
         </androidx.cardview.widget.CardView>
 
         <TextView

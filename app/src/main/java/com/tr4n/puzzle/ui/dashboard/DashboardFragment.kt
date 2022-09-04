@@ -8,7 +8,7 @@ import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import com.tr4n.puzzle.R
 import com.tr4n.puzzle.base.BaseFragment
-import com.tr4n.puzzle.data.model.PreviewChallenge
+import com.tr4n.puzzle.data.model.Preview
 import com.tr4n.puzzle.data.type.Category
 import com.tr4n.puzzle.databinding.FragmentDashboardBinding
 import com.tr4n.puzzle.extension.navigateWithAnim
@@ -110,11 +110,16 @@ class DashboardFragment : BaseFragment<FragmentDashboardBinding, DashboardViewMo
             })
     }
 
-    override fun onClick(item: PreviewChallenge) {
+    override fun onClick(item: Preview) {
         when {
             item.challenge.imageName.isBlank() -> browseImages()
             item.title.isNotBlank() -> {
                 val category = Category.fromValue(item.challenge.type) ?: return
+                val bundle = CategoryFragmentArgs.Builder(category).build().toBundle()
+                findNavController().navigateWithAnim(R.id.categoryFragment, bundle)
+            }
+            item.moreCount > 0 -> {
+                val category = Category.MY_PUZZLES
                 val bundle = CategoryFragmentArgs.Builder(category).build().toBundle()
                 findNavController().navigateWithAnim(R.id.categoryFragment, bundle)
             }
@@ -146,6 +151,6 @@ class DashboardFragment : BaseFragment<FragmentDashboardBinding, DashboardViewMo
     }
 }
 
-interface DashboardFragmentListener : OnSimpleItemClick<PreviewChallenge> {
+interface DashboardFragmentListener : OnSimpleItemClick<Preview> {
     fun askPermission()
 }

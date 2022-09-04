@@ -17,7 +17,7 @@
             bitmap="@{item.bitmap}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/dp_1"
+            android:layout_margin="0.5dp"
             android:scaleType="fitCenter"
             android:alpha="@{item.alpha}"
             android:adjustViewBounds="true"

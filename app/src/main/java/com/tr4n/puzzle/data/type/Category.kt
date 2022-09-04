@@ -4,6 +4,11 @@ import androidx.annotation.DrawableRes
 import com.tr4n.puzzle.R
 
 enum class Category(val value: Int, val keyword: String, val offlineImages: List<Int>) {
+    MY_PUZZLES(
+        value = 0,
+        keyword = "My puzzles",
+        offlineImages = emptyList()
+    ),
     ANIME(
         value = 1,
         keyword = "anime",
@@ -112,7 +117,9 @@ enum class Category(val value: Int, val keyword: String, val offlineImages: List
 
     companion object {
 
-        fun fromValue(value: Int): Category? = values().find { it.value == value }
+        val values = values().filter { it.value > 0 }
+
+        fun fromValue(value: Int): Category? = values.find { it.value == value }
 
         @DrawableRes
         fun getImageDrawableRes(imageName: String): Int? {
@@ -121,7 +128,7 @@ enum class Category(val value: Int, val keyword: String, val offlineImages: List
             val (name, index) = imageName.split("_").run {
                 first() to last().toInt()
             }
-            val category = Category.values().find { it.name == name } ?: return null
+            val category = values.find { it.name == name } ?: return null
             return category.offlineImages.getOrNull(index)
         }
     }

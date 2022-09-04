@@ -6,6 +6,7 @@
     <data>
 
         <import type="com.tr4n.puzzle.R" />
+        <import type="com.tr4n.puzzle.util.BitmapUtils" />
 
         <variable
             name="viewModel"
@@ -28,7 +29,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:paddingStatusBar="@{true}">
 
-        <FrameLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/frameImage"
             android:layout_width="0dp"
             android:layout_height="0dp"
@@ -43,25 +44,93 @@
             app:layout_constraintVertical_bias="0.35">
 
             <androidx.cardview.widget.CardView
+                android:id="@+id/cardView2"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 app:cardCornerRadius="@dimen/dp_16"
-                app:cardElevation="0dp">
+                app:cardElevation="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/imageReview"
-                    bitmap="@{viewModel.imageBitmap}"
+                    app:decodedSize="@{BitmapUtils.DEFAULT_DECODED_IMAGE_SIZE}"
+                    app:imageFile="@{viewModel.imageFile}"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:adjustViewBounds="true"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintDimensionRatio="1:1"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
                     tools:src="@tools:sample/backgrounds/scenic" />
             </androidx.cardview.widget.CardView>
-        </FrameLayout>
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guidelineHorizontal66"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.66" />
+
+            <View
+                android:id="@+id/viewBorderHorizontal66"
+                android:layout_width="@dimen/dp_1"
+                android:layout_height="0dp"
+                android:background="@color/colorWhiteTransparent50"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/guidelineHorizontal66"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_percent="0.3" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guidelineHorizontal33"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.33" />
+
+            <View
+                android:id="@+id/viewBorderHorizontal33"
+                android:layout_width="@dimen/dp_1"
+                android:layout_height="0dp"
+                android:background="@color/colorWhiteTransparent50"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/guidelineHorizontal33"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_percent="0.3" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guidelineVertical66"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent="0.66" />
+
+            <View
+                android:id="@+id/viewBorderVertical66"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/dp_1"
+                android:background="@color/colorWhiteTransparent50"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/guidelineVertical66" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guidelineVertical33"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent="0.33" />
+
+            <View
+                android:id="@+id/viewBorderVertical33"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/dp_1"
+                android:background="@color/colorWhiteTransparent50"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/guidelineVertical33" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/buttonSave"
@@ -112,5 +181,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_baseline_close_24" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
