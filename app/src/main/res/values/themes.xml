@@ -22,9 +22,9 @@
 
         <!-- Use windowSplashScreenAnimatedIcon to add either a drawable or an
              animated drawable. One of these is required. -->
-        <item name="windowSplashScreenAnimatedIcon">@mipmap/img_logo_large</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/splash</item>
         <!-- Required for animated icons -->
-        <!--        <item name="windowSplashScreenAnimationDuration">200</item>-->
+        <item name="windowSplashScreenAnimationDuration">0</item>
 
         <!-- Set the theme of the Activity that directly follows your splash screen. -->
         <!-- Required -->
